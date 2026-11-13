@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coral — Find Your Sound</title>
+<meta name="description" content="Coral is a premium Android music player. Local files, gapless playback, lyrics that keep time. Coming soon.">
+<meta name="theme-color" content="#0F0723">
+
+<meta property="og:title" content="Coral — Find Your Sound">
+<meta property="og:description" content="A premium Android music player. Local files, gapless playback, lyrics that keep time.">
+<meta property="og:type" content="website">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%230F0723'/%3E%3Ccircle cx='32' cy='32' r='13' fill='none' stroke='%23F5F5F7' stroke-width='2.5'/%3E%3Ccircle cx='32' cy='32' r='4' fill='%23642BB4'/%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rethink+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#0F0723;
+  --bg-deep:#080314;
+  --on:#FFFFFF;
+  --strong:#FFFFFF;
+  --variant:#CFC8DE;
+  --muted:#9D968E;
+  --violet:#642BB4;
+  --violet-lit:#A47BE0;
+  --orange:#EF6333;
+  --cyan:#078BBC;
+
+  --outline:rgba(255,255,255,.08);
+  --outline-2:rgba(164,123,224,.38);
+  --wash:rgba(255,255,255,.035);
+  --wash-2:rgba(255,255,255,.06);
+
+  --card-shadow:
+    rgba(255,255,255,.10) 0 1px 0 0 inset,
+    rgba(10,3,26,.25) 0 1px 1px 0,
+    rgba(8,3,20,.6) 0 24px 60px -20px;
+
+  --primary-shadow:
+    rgb(255,255,255) 0 1px 0 0 inset,
+    rgba(0,0,0,.18) 0 -1px 0 0 inset,
+    rgba(100,43,180,.55) 0 18px 50px -14px;
+
+  --ease:cubic-bezier(.22,1,.36,1);
+  --ease-out:cubic-bezier(.4,0,.2,1);
+  --page:64px;
+  --section:81px;
+  --radius:20px;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;background:#0F0723}
+body{
+  background:transparent;
+  color:var(--on);
+  font-family:'Rethink Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+  font-size:17px;line-height:1.5;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+  position:relative;
+}
+/* deep-water backdrop */
+body::before{
+  content:"";position:fixed;inset:0;z-index:-2;
+  background:
+    radial-gradient(120% 80% at 78% 18%,rgba(100,43,180,.30),transparent 58%),
+    radial-gradient(90% 70% at 12% 88%,rgba(7,139,188,.10),transparent 60%),
+    linear-gradient(180deg,#120829 0%,#0F0723 42%,#080314 100%);
+}
+body::after{
+  content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(140% 100% at 50% 0%,transparent 40%,rgba(8,3,20,.55) 100%);
+}
+#octo{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+main,header,footer{position:relative;z-index:1}
+
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+::selection{background:var(--violet-lit);color:#0A031A}
+:focus-visible{outline:1.5px solid rgba(164,123,224,.75);outline-offset:3px;border-radius:9999px}
+
+/* ── type ───────────────────────────────────────────── */
+.display{font-size:clamp(64px,11.6vw,152.5px);font-weight:700;line-height:.9;letter-spacing:-.055em}
+.h-lg{font-size:clamp(36px,6.2vw,89px);font-weight:600;line-height:.98;letter-spacing:-.045em}
+.h-md{font-size:clamp(30px,4.3vw,62px);font-weight:600;line-height:.98;letter-spacing:-.045em}
+.lead{font-size:clamp(17px,1.4vw,19px);line-height:1.6;color:var(--variant)}
+.small{font-size:14px;line-height:1.45;color:var(--muted)}
+.caption{font-size:13px;line-height:1.5;color:var(--muted)}
+
+/* ── layout ─────────────────────────────────────────── */
+.wrap{width:100%;max-width:1408px;margin:0 auto;padding-inline:var(--page)}
+.section{padding-block:var(--section)}
+.rule{border-top:1px solid var(--outline)}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:9px;
+  padding:8px 15px 8px 12px;border-radius:9999px;
+  border:1px solid rgba(255,255,255,.09);
+  background:rgba(255,255,255,.025);
+  color:var(--muted);font-size:13px;line-height:1;
+}
+.eyebrow i{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--violet-lit);
+  box-shadow:0 0 0 3px rgba(100,43,180,.30),0 0 14px 2px rgba(164,123,224,.55);
+  animation:blip 2.8s ease-in-out infinite;
+}
+@keyframes blip{0%,100%{opacity:.5}50%{opacity:1}}
+
+/* ── nav ────────────────────────────────────────────── */
+.nav{
+  position:sticky;top:0;z-index:50;
+  background:rgba(15,7,35,.62);
+  -webkit-backdrop-filter:blur(22px) saturate(130%);
+  backdrop-filter:blur(22px) saturate(130%);
+  border-bottom:1px solid var(--outline);
+}
+.progress{
+  position:absolute;left:0;bottom:-1px;height:1px;width:0;
+  background:linear-gradient(90deg,transparent,var(--violet-lit));
+  box-shadow:0 0 12px rgba(164,123,224,.5);
+  transition:width .1s linear;
+}
+.nav-in{display:flex;align-items:center;justify-content:space-between;gap:24px;height:69px}
+.brand{display:inline-flex;align-items:center;gap:11px}
+.brand-mark{width:26px;height:26px;border-radius:50%;border:1.5px solid var(--on);display:grid;place-items:center}
+.brand-mark::after{content:"";width:7px;height:7px;border-radius:50%;background:var(--violet-lit);box-shadow:0 0 10px rgba(164,123,224,.8)}
+.brand-name{font-size:18px;font-weight:600;letter-spacing:-.03em}
+.nav-links{display:flex;align-items:center;gap:2px}
+.nav-link{
+  font-size:14.5px;color:rgba(255,255,255,.82);
+  padding:9px 14px;border-radius:9999px;
+  transition:background .2s var(--ease-out),color .2s var(--ease-out);
+}
+.nav-link:hover{background:rgba(100,43,180,.22);color:#fff}
+
+/* ── buttons ────────────────────────────────────────── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;border-radius:9999px;white-space:nowrap;
+  transition:transform .25s var(--ease),background .25s var(--ease-out),box-shadow .25s var(--ease-out),color .25s var(--ease-out)}
+.btn-primary{
+  height:43px;padding:11px 19px;background:var(--on);color:#0A031A;
+  font-size:14px;font-weight:600;letter-spacing:-.005em;
+  box-shadow:var(--primary-shadow);
+}
+.btn-primary:hover{transform:translateY(-1px);background:#fff}
+.btn-secondary{
+  height:58px;padding:17px 30px;border:1px solid rgba(255,255,255,.14);
+  color:var(--strong);font-size:16px;font-weight:600;letter-spacing:-.005em;
+  background:rgba(255,255,255,.02);box-shadow:var(--card-shadow);
+}
+.btn-secondary:hover{background:rgba(100,43,180,.22);border-color:var(--outline-2);transform:translateY(-1px)}
+.btn-arrow{font-size:15px;line-height:1;transform:translateY(-.5px)}
+
+/* ── hero ───────────────────────────────────────────── */
+.hero{
+  position:relative;padding-top:96px;padding-bottom:var(--section);
+  min-height:calc(100svh - 69px);
+  display:flex;flex-direction:column;justify-content:flex-end;
+  overflow:hidden;
+}
+.rings{position:absolute;left:50%;top:38%;transform:translate(-50%,-50%);pointer-events:none;z-index:0}
+.rings span{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);border-radius:50%}
+.rings span:nth-child(1){width:132vmin;height:132vmin;border:1px solid rgba(164,123,224,.10);opacity:.6}
+.rings span:nth-child(2){width:96vmin;height:96vmin;border:1px solid rgba(164,123,224,.14);opacity:.75}
+.rings span:nth-child(3){width:60vmin;height:60vmin;border:1px solid rgba(255,255,255,.07)}
+.rings span:nth-child(4){width:30vmin;height:30vmin;border:1px dashed rgba(164,123,224,.20);animation:spin 60s linear infinite}
+@keyframes spin{to{transform:translate(-50%,-50%) rotate(360deg)}}
+
+.hero-grid{position:relative;z-index:1;display:grid;grid-template-columns:1.12fr .88fr;gap:32px;align-items:end}
+.hero-left .eyebrow{margin-bottom:26px}
+.hero-sub{margin-top:22px;font-size:clamp(19px,2.1vw,28px);font-weight:400;letter-spacing:-.02em;color:var(--muted)}
+.hero-right{display:flex;flex-direction:column;gap:30px;padding-bottom:10px}
+.hero-right .lead{max-width:42ch}
+.actions{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.hero-meta{
+  display:flex;flex-wrap:wrap;gap:8px 22px;
+  margin-top:52px;padding-top:22px;
+  border-top:1px solid var(--outline);
+  font-size:13px;color:var(--muted);
+}
+.hero-meta span{display:inline-flex;align-items:center;gap:8px}
+.hero-meta span::before{content:"";width:4px;height:4px;border-radius:50%;background:rgba(164,123,224,.7)}
+
+/* ── ticker ─────────────────────────────────────────── */
+.ticker{border-block:1px solid var(--outline);overflow:hidden;padding-block:14px;background:rgba(10,3,26,.35)}
+.ticker-track{display:flex;width:max-content;animation:slide 46s linear infinite}
+.ticker-track span{
+  display:inline-flex;align-items:center;padding-inline:26px;
+  font-size:13px;letter-spacing:.14em;text-transform:uppercase;
+  color:rgba(157,150,142,.9);white-space:nowrap;
+}
+.ticker-track span::after{content:"";width:4px;height:4px;border-radius:50%;background:rgba(164,123,224,.55);margin-left:26px}
+@keyframes slide{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ── section head ───────────────────────────────────── */
+.head{display:grid;grid-template-columns:.42fr 1fr;gap:32px;align-items:start;margin-bottom:56px}
+.kicker{display:inline-flex;align-items:center;gap:10px;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.kicker::before{content:"";width:18px;height:1px;background:rgba(164,123,224,.6)}
+.head p{margin-top:18px;max-width:52ch;color:var(--variant)}
+
+/* ── cards ──────────────────────────────────────────── */
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.card{
+  position:relative;padding:32px 34px 36px;border-radius:var(--radius);
+  border:1px solid var(--outline);
+  background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.012));
+  box-shadow:var(--card-shadow);
+  transition:background .3s var(--ease-out),border-color .3s var(--ease-out),transform .35s var(--ease);
+}
+.card:hover{background:linear-gradient(180deg,rgba(100,43,180,.18),rgba(255,255,255,.015));border-color:var(--outline-2);transform:translateY(-2px)}
+.card .num{font-size:13px;color:var(--violet-lit);letter-spacing:.06em;opacity:.85}
+.card h3{margin-top:26px;font-size:clamp(21px,2vw,26px);font-weight:600;line-height:1.08;letter-spacing:-.035em}
+.card p{margin-top:12px;font-size:14px;line-height:1.5;color:var(--muted);max-width:34ch}
+
+/* ── player ─────────────────────────────────────────── */
+.split{display:grid;grid-template-columns:1fr 400px;gap:clamp(32px,6vw,81px);align-items:center}
+.points{list-style:none;margin-top:44px;display:grid;gap:0}
+.points li{display:grid;grid-template-columns:34px 1fr;gap:18px;padding-block:24px;border-top:1px solid var(--outline);align-items:start}
+.points li:last-child{border-bottom:1px solid var(--outline)}
+.points .n{font-size:13px;color:var(--violet-lit);padding-top:3px;opacity:.85}
+.points h4{font-size:18px;font-weight:600;letter-spacing:-.02em}
+.points p{margin-top:6px;font-size:14px;line-height:1.5;color:var(--muted);max-width:44ch}
+
+.player{
+  border-radius:var(--radius);border:1px solid rgba(255,255,255,.10);
+  background:linear-gradient(180deg,rgba(100,43,180,.22),rgba(20,9,44,.85) 42%,rgba(10,3,26,.9));
+  box-shadow:var(--card-shadow);padding:24px;
+}
+.player-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.player-top .caption{letter-spacing:.06em;text-transform:uppercase;font-size:11px}
+.chip{font-size:11px;letter-spacing:.04em;color:var(--variant);border:1px solid rgba(164,123,224,.35);border-radius:9999px;padding:4px 9px;background:rgba(100,43,180,.18)}
+.art{
+  position:relative;aspect-ratio:1;border-radius:18px;overflow:hidden;
+  border:1px solid rgba(164,123,224,.22);
+  background:
+    radial-gradient(circle at 34% 28%,rgba(239,99,51,.16),transparent 46%),
+    radial-gradient(circle at 72% 76%,rgba(7,139,188,.20),transparent 54%),
+    radial-gradient(circle at 50% 50%,rgba(100,43,180,.55),rgba(10,3,26,.9) 72%);
+}
+.art::before,.art::after{content:"";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);border-radius:50%}
+.art::before{width:64%;height:64%;border:1px solid rgba(255,255,255,.12)}
+.art::after{width:40%;height:40%;border:1px solid rgba(255,255,255,.20)}
+.art .core{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:26%;height:26%;border-radius:50%;
+  background:radial-gradient(circle at 40% 34%,rgba(255,255,255,.95),rgba(164,123,224,.35) 42%,rgba(100,43,180,0) 74%);
+  filter:blur(.2px);
+}
+.track{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;margin-top:22px}
+.track .t{font-size:17px;font-weight:600;letter-spacing:-.02em}
+.track .a{font-size:14px;color:var(--muted);margin-top:2px}
+.track .time{font-size:12px;color:var(--muted);white-space:nowrap;padding-bottom:2px}
+.bar{position:relative;height:2px;border-radius:2px;background:rgba(255,255,255,.12);margin-top:18px}
+.bar i{position:absolute;left:0;top:0;height:2px;width:44%;border-radius:2px;background:linear-gradient(90deg,var(--violet),var(--violet-lit))}
+.bar i::after{content:"";position:absolute;right:-4px;top:50%;transform:translateY(-50%);width:8px;height:8px;border-radius:50%;background:#fff;box-shadow:0 0 10px rgba(164,123,224,.8)}
+.controls{display:flex;align-items:center;justify-content:space-between;margin-top:22px}
+.ic{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;color:var(--variant);
+  transition:background .25s var(--ease-out),color .25s var(--ease-out)}
+.ic:hover{background:rgba(255,255,255,.08);color:#fff}
+.ic.play{width:52px;height:52px;background:var(--violet);color:#fff;box-shadow:0 12px 34px -12px rgba(100,43,180,.9)}
+.ic.play:hover{background:#7334c9}
+.ic svg{display:block}
+
+/* ── spec strip ─────────────────────────────────────── */
+.specs{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.spec{padding:34px 34px 38px;border-radius:var(--radius);border:1px solid var(--outline);
+  background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.008));}
+.spec .v{font-size:clamp(30px,4vw,52px);font-weight:600;letter-spacing:-.045em;line-height:1}
+.spec .k{margin-top:14px;font-size:14px;color:var(--muted)}
+
+/* ── cta ────────────────────────────────────────────── */
+.cta{position:relative;text-align:center;padding-block:140px;overflow:hidden}
+.cta::before{
+  content:"";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:min(820px,90vw);height:min(820px,90vw);border-radius:50%;
+  background:radial-gradient(circle,rgba(100,43,180,.30),transparent 62%);
+  pointer-events:none;
+}
+.cta-in{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:26px}
+.cta h2{max-width:16ch}
+.cta p{max-width:46ch;color:var(--muted);font-size:17px}
+.cta .btn-primary{height:58px;padding:0 32px;font-size:16px}
+
+/* ── footer ─────────────────────────────────────────── */
+.footer{border-top:1px solid var(--outline);padding-block:34px 40px;background:rgba(8,3,20,.4)}
+.footer-in{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.footer .caption{color:rgba(157,150,142,.85)}
+.footer-links{display:flex;gap:4px}
+.footer-links a{font-size:13px;color:var(--muted);padding:8px 12px;border-radius:9999px;
+  transition:color .25s var(--ease-out),background .25s var(--ease-out)}
+.footer-links a:hover{color:#fff;background:rgba(100,43,180,.28)}
+
+/* ── reveal ─────────────────────────────────────────── */
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .6s var(--ease),transform .6s var(--ease);transition-delay:calc(var(--i,0)*55ms)}
+.reveal.in{opacity:1;transform:none}
+
+/* ── responsive ─────────────────────────────────────── */
+@media (max-width:1100px){
+  .split{grid-template-columns:1fr 340px;gap:40px}
+  .grid{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:900px){
+  :root{--page:28px;--section:64px}
+  #octo{opacity:.62}
+  .hero{min-height:auto;padding-top:72px}
+  .hero-grid{grid-template-columns:1fr;gap:36px;align-items:start}
+  .hero-sub{margin-top:14px}
+  .head{grid-template-columns:1fr;gap:16px;margin-bottom:36px}
+  .split{grid-template-columns:1fr;gap:56px}
+  .player{max-width:400px}
+  .nav-links{display:none}
+}
+@media (max-width:640px){
+  :root{--page:20px;--section:56px}
+  .grid{grid-template-columns:1fr}
+  .specs{grid-template-columns:1fr}
+  .card{padding:26px 24px 28px}
+  .hero-meta{margin-top:36px}
+  .cta{padding-block:96px}
+  .rings span:nth-child(1),.rings span:nth-child(2){display:none}
+  .btn-secondary{height:52px;padding:15px 24px;font-size:15px}
+  .footer-in{flex-direction:column;align-items:flex-start}
+}
+
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .ticker-track,.rings span,.eyebrow i{animation:none}
+  .reveal{opacity:1;transform:none;transition:none}
+  .btn,.card,.ic,.nav-link{transition:none}
+}
+</style>
+</head>
+<body>
+
+<canvas id="octo" aria-hidden="true"></canvas>
+
+<header class="nav">
+  <div class="wrap nav-in">
+    <a class="brand" href="#top" aria-label="Coral — home">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span class="brand-name">Coral</span>
+    </a>
+    <nav class="nav-links" aria-label="Sections">
+      <a class="nav-link" href="#inside">Inside</a>
+      <a class="nav-link" href="#player">The player</a>
+      <a class="nav-link" href="#specs">Details</a>
+    </nav>
+    <a class="btn btn-primary" href="https://t.me/rajat_xo" target="_blank" rel="noopener">Get notified</a>
+  </div>
+  <div class="progress" id="progress"></div>
+</header>
+
+<main id="top">
+
+  <section class="hero">
+    <div class="rings" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+    <div class="wrap">
+      <div class="hero-grid">
+        <div class="hero-left">
+          <span class="eyebrow"><i aria-hidden="true"></i> Coming soon · Android</span>
+          <h1 class="display">Coral</h1>
+          <p class="hero-sub">Find your sound.</p>
+        </div>
+        <div class="hero-right">
+          <p class="lead">
+            A music player that treats your library like it matters. Local files,
+            gapless playback, and an interface that gets out of the way.
+          </p>
+          <div class="actions">
+            <a class="btn btn-primary" href="https://t.me/rajat_xo" target="_blank" rel="noopener">Get notified</a>
+            <a class="btn btn-secondary" href="#inside">See what&rsquo;s inside <span class="btn-arrow" aria-hidden="true">&darr;</span></a>
+          </div>
+        </div>
+      </div>
+      <div class="hero-meta">
+        <span>Offline first</span>
+        <span>No accounts</span>
+        <span>No tracking</span>
+        <span>One small APK</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="ticker" aria-hidden="true">
+    <div class="ticker-track">
+      <span>Local files</span><span>Gapless playback</span><span>Word-level lyrics</span>
+      <span>8D audio</span><span>Adaptive colour</span><span>No accounts</span>
+      <span>Local files</span><span>Gapless playback</span><span>Word-level lyrics</span>
+      <span>8D audio</span><span>Adaptive colour</span><span>No accounts</span>
+    </div>
+  </div>
+
+  <section class="section" id="inside">
+    <div class="wrap">
+      <div class="head">
+        <div><span class="kicker">01 &mdash; Inside</span></div>
+        <div class="reveal">
+          <h2 class="h-lg">Quietly excellent<br>where it counts.</h2>
+          <p>Nothing here is a feature for the back of a box. Each one exists because
+             listening to an album on a phone is still, somehow, worse than it should be.</p>
+        </div>
+      </div>
+
+      <div class="grid">
+        <article class="card reveal" style="--i:0">
+          <span class="num">01</span>
+          <h3>Your library, untouched</h3>
+          <p>Read straight from the device. Nothing uploaded, nothing indexed in somebody else&rsquo;s cloud, nothing to sign into.</p>
+        </article>
+        <article class="card reveal" style="--i:1">
+          <span class="num">02</span>
+          <h3>Gapless, then crossfade</h3>
+          <p>Albums play the way they were recorded. When you want it, tracks melt into each other instead.</p>
+        </article>
+        <article class="card reveal" style="--i:2">
+          <span class="num">03</span>
+          <h3>Lyrics that keep time</h3>
+          <p>Word-level timing, per-singer alignment, and instrumental breaks that breathe instead of sitting still.</p>
+        </article>
+        <article class="card reveal" style="--i:3">
+          <span class="num">04</span>
+          <h3>Colour from the cover</h3>
+          <p>Artwork sets the room. The interface tints itself, then fades back to black so the music stays the bright thing.</p>
+        </article>
+        <article class="card reveal" style="--i:4">
+          <span class="num">05</span>
+          <h3>Eight dimensions, on purpose</h3>
+          <p>A slow orbit of the mix around you. Tuned by ear, adjustable to taste, never a gimmick you can&rsquo;t turn off.</p>
+        </article>
+        <article class="card reveal" style="--i:5">
+          <span class="num">06</span>
+          <h3>Fast, or it doesn&rsquo;t count</h3>
+          <p>Cold start to first track in under a second. Animation that runs on the frame, not on a timer.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section rule" id="player">
+    <div class="wrap split">
+      <div>
+        <span class="kicker">02 &mdash; The player</span>
+        <h2 class="h-lg" style="margin-top:18px">One screen<br>you stay on.</h2>
+        <ul class="points">
+          <li><span class="n">01</span><div><h4>Built around the album</h4><p>Cover, colour and the next track, arranged so you never have to think about where anything is.</p></div></li>
+          <li><span class="n">02</span><div><h4>Controls that stay put</h4><p>Play stays centred. Everything else moves around it, not the other way round.</p></div></li>
+          <li><span class="n">03</span><div><h4>Nothing between you and the song</h4><p>No feed, no recommendations, no upsell. Open it, press play, put the phone down.</p></div></li>
+        </ul>
+      </div>
+
+      <div class="player reveal" aria-hidden="true">
+        <div class="player-top">
+          <span class="caption">Now playing</span>
+          <span class="chip">Lossless</span>
+        </div>
+        <div class="art"><span class="core"></span></div>
+        <div class="track">
+          <div><p class="t">Nocturne in C</p><p class="a">Aurelia</p></div>
+          <span class="time">2:14 / 4:48</span>
+        </div>
+        <div class="bar"><i></i></div>
+        <div class="controls">
+          <span class="ic">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M16 3h5v5"/><path d="M4 20 21 3"/><path d="M21 16v5h-5"/><path d="M15 15l6 6"/><path d="M4 4l5 5"/>
+            </svg>
+          </span>
+          <span class="ic"><svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h2v14H6zM20 5l-11 7 11 7z"/></svg></span>
+          <span class="ic play"><svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4l13 8-13 8z"/></svg></span>
+          <span class="ic"><svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M16 5h2v14h-2zM4 5l11 7-11 7z"/></svg></span>
+          <span class="ic">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17 2l4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/>
+              <path d="M7 22l-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/>
+            </svg>
+          </span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="specs">
+    <div class="wrap">
+      <div class="head">
+        <div><span class="kicker">03 &mdash; Details</span></div>
+        <div class="reveal">
+          <h2 class="h-lg">Small app.<br>Short list.</h2>
+          <p>No subscription, no tier system, no account to recover. Coral reads what is already on your phone and plays it well.</p>
+        </div>
+      </div>
+      <div class="specs">
+        <div class="spec reveal" style="--i:0"><div class="v">0</div><div class="k">Accounts. Your library never leaves the device.</div></div>
+        <div class="spec reveal" style="--i:1"><div class="v">10+</div><div class="k">Android versions supported, down to Android 10.</div></div>
+        <div class="spec reveal" style="--i:2"><div class="v">1</div><div class="k">APK. No companion app, no plugin, no setup wizard.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta">
+    <div class="wrap cta-in">
+      <span class="eyebrow"><i aria-hidden="true"></i> In final testing</span>
+      <h2 class="h-md">Coming soon.</h2>
+      <p>Coral is in its last stretch. Leave a message on Telegram and you&rsquo;ll get the build the day it lands.</p>
+      <a class="btn btn-primary" href="https://t.me/rajat_xo" target="_blank" rel="noopener">Get notified <span class="btn-arrow" aria-hidden="true">&rarr;</span></a>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="wrap footer-in">
+    <p class="caption">&copy; 2026 Coral &middot; Designed and built by Rajat</p>
+    <nav class="footer-links" aria-label="Elsewhere">
+      <a href="https://t.me/rajat_xo" target="_blank" rel="noopener">Telegram</a>
+      <a href="https://github.com/rajatxo" target="_blank" rel="noopener">GitHub</a>
+    </nav>
+  </div>
+</footer>
+
+<script src="https://unpkg.com/lenis@1.3.27/dist/lenis.min.js" defer></script>
+<script>
+(function () {
+  'use strict';
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var TAU = Math.PI * 2;
+
+  /* ── reveal ───────────────────────────────────────── */
+  if (!reduced && 'IntersectionObserver' in window) {
+    var obs = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add('in'); obs.unobserve(e.target); }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+    document.querySelectorAll('.reveal').forEach(function (el) { obs.observe(el); });
+  } else {
+    document.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('in'); });
+  }
+
+  /* ── octopus ──────────────────────────────────────── */
+  var cv = document.getElementById('octo');
+  var ctx = cv && cv.getContext ? cv.getContext('2d') : null;
+  var W = 0, H = 0, DPR = 1;
+  var scrollS = window.scrollY || 0, scrollPrev = scrollS, bend = 0, spin = 0;
+
+  function updateProgress() {
+    var doc = document.documentElement;
+    var max = doc.scrollHeight - window.innerHeight;
+    var pr = max > 0 ? (window.scrollY || 0) / max : 0;
+    var bar = document.getElementById('progress');
+    if (bar) bar.style.width = (Math.max(0, Math.min(1, pr)) * 100).toFixed(2) + '%';
+  }
+
+  function resize() {
+    if (!ctx) return;
+    DPR = Math.min(2, window.devicePixelRatio || 1);
+    W = cv.clientWidth; H = cv.clientHeight;
+    cv.width = Math.round(W * DPR);
+    cv.height = Math.round(H * DPR);
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  }
+
+  function ribbon(pts, w0, seed) {
+    var left = [], right = [], k, p, w, nx, ny;
+    for (k = 0; k < pts.length; k++) {
+      p = pts[k];
+      w = Math.max(0.4, w0 * Math.pow(1 - p.t, 0.78));
+      nx = Math.cos(p.a + Math.PI / 2);
+      ny = Math.sin(p.a + Math.PI / 2);
+      left.push([p.x + nx * w, p.y + ny * w]);
+      right.push([p.x - nx * w, p.y - ny * w]);
+    }
+    ctx.beginPath();
+    ctx.moveTo(left[0][0], left[0][1]);
+    for (k = 1; k < left.length; k++) ctx.lineTo(left[k][0], left[k][1]);
+    for (k = right.length - 1; k >= 0; k--) ctx.lineTo(right[k][0], right[k][1]);
+    ctx.closePath();
+    ctx.fillStyle = 'rgba(126,86,220,0.06)';
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(226,216,255,0.115)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    // suckers: cream dots with a violet edge
+    for (k = 4; k < pts.length - 1; k += 3) {
+      p = pts[k];
+      w = Math.max(0.6, w0 * Math.pow(1 - p.t, 0.78));
+      var sx = p.x + Math.cos(p.a + Math.PI / 2) * w * 0.18;
+      var sy = p.y + Math.sin(p.a + Math.PI / 2) * w * 0.18;
+      var r = Math.max(0.7, w * 0.40);
+      ctx.beginPath();
+      ctx.arc(sx, sy, r, 0, TAU);
+      ctx.fillStyle = (k % 6 === 0)
+        ? 'rgba(239,99,51,0.20)'
+        : 'rgba(214,198,255,0.16)';
+      ctx.fill();
+    }
+  }
+
+  function tentacle(baseAngle, seed, phase, S, curl) {
+    var N = 26, len = S * 0.68 * (0.84 + 0.26 * Math.sin(seed * 2.1));
+    var w0 = S * 0.024, pts = [], k, t, ang, step;
+    var x = Math.cos(baseAngle) * S * 0.052;
+    var y = Math.sin(baseAngle) * S * 0.030 + S * 0.02;
+    for (k = 0; k <= N; k++) {
+      t = k / N;
+      ang = baseAngle
+          + curl * Math.pow(t, 1.65)
+          + Math.sin(phase + seed + t * 2.4) * 0.26 * t;
+      step = (len / N) * (1 - 0.30 * t);
+      x += Math.cos(ang) * step;
+      y += Math.sin(ang) * step;
+      pts.push({ x: x, y: y, t: t, a: ang });
+    }
+    ribbon(pts, w0, seed);
+  }
+
+  function mantle(S, phase) {
+    var rx = S * 0.165, ry = S * 0.205, cyy = -S * 0.055;
+    ctx.beginPath();
+    ctx.ellipse(0, cyy, rx, ry, 0, 0, TAU);
+    ctx.fillStyle = 'rgba(100,43,180,0.13)';
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(226,216,255,0.16)';
+    ctx.lineWidth = 1.1;
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.arc(0, cyy + ry * 0.18, rx * 0.74, Math.PI * 0.18, Math.PI * 0.82);
+    ctx.strokeStyle = 'rgba(255,255,255,0.07)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    // eyes
+    [-1, 1].forEach(function (s) {
+      var ex = s * rx * 0.44, ey = cyy + ry * 0.42;
+      ctx.beginPath(); ctx.arc(ex, ey, S * 0.016, 0, TAU);
+      ctx.fillStyle = 'rgba(255,255,255,0.20)'; ctx.fill();
+      ctx.beginPath(); ctx.arc(ex, ey, S * 0.007, 0, TAU);
+      ctx.fillStyle = 'rgba(164,123,224,0.95)'; ctx.fill();
+    });
+  }
+
+  function draw(now) {
+    if (!ctx) return;
+    ctx.clearRect(0, 0, W, H);
+
+    var mobile = W < 760;
+    var S = Math.min(W * 0.92, H * 0.80) * (mobile ? 0.66 : 0.60);
+    var cx = mobile ? W * 0.70 : W * 0.73;
+    var cy = (mobile ? H * 0.50 : H * 0.44) - scrollS * 0.035;
+    var phase = scrollS * 0.0032 + spin;
+
+    // water glow behind the creature
+    var g = ctx.createRadialGradient(cx, cy, 0, cx, cy, S * 1.5);
+    g.addColorStop(0, 'rgba(100,43,180,0.26)');
+    g.addColorStop(0.45, 'rgba(100,43,180,0.08)');
+    g.addColorStop(1, 'rgba(100,43,180,0)');
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, W, H);
+
+    ctx.save();
+    ctx.translate(cx, cy);
+    var breathe = 1 + 0.016 * Math.sin(phase * 0.9);
+    ctx.scale(breathe, breathe);
+
+    for (var i = 0; i < 8; i++) {
+      var a = 0.34 + i * (2.50 / 7);
+      var seed = i * 1.73;
+      var curl = (i % 2 ? 1 : -1) * (0.78 + 0.28 * Math.sin(seed)) + bend * 0.16;
+      tentacle(a, seed, phase, S, curl);
+    }
+    mantle(S, phase);
+    ctx.restore();
+
+    // drifting plankton
+    for (var p = 0; p < 18; p++) {
+      var px = (p * 137.5 + now * 0.012) % (W + 80) - 40;
+      var py = ((p * 271.3 + scrollS * 0.06 + now * 0.02) % (H + 80)) - 40;
+      var r = 0.7 + (p % 3) * 0.5;
+      ctx.beginPath();
+      ctx.arc(px, py, r, 0, TAU);
+      ctx.fillStyle = (p % 5 === 0) ? 'rgba(239,99,51,0.35)' : 'rgba(180,160,255,0.28)';
+      ctx.fill();
+    }
+  }
+
+  var last = performance.now();
+
+  function frame(now) {
+    var dt = Math.min(64, now - last);
+    last = now;
+    // smooth the scroll value, then bend the arms by its velocity
+    scrollS += ((window.scrollY || 0) - scrollS) * Math.min(1, 0.085 + dt * 0.0004);
+    var v = scrollS - scrollPrev;
+    scrollPrev = scrollS;
+    bend += (Math.max(-2.2, Math.min(2.2, v * 0.010)) - bend) * 0.10;
+    spin += dt * 0.00022;
+
+    updateProgress();
+    draw(now);
+    requestAnimationFrame(frame);
+  }
+
+  resize();
+  window.addEventListener('resize', function () { resize(); draw(performance.now()); }, { passive: true });
+
+  if (reduced) {
+    updateProgress();
+    draw(performance.now());
+    window.addEventListener('scroll', function () {
+      updateProgress();
+      draw(performance.now());
+    }, { passive: true });
+  } else {
+    requestAnimationFrame(function (t) { last = t; frame(t); });
+    document.addEventListener('visibilitychange', function () {
+      if (!document.hidden) { last = performance.now(); }
+    });
+  }
+
+  /* ── smooth anchors ───────────────────────────────── */
+  window.addEventListener('load', function () {
+    if (reduced || typeof Lenis === 'undefined') return;
+    var lenis = new Lenis({ autoRaf: true, smoothWheel: true, duration: 1.05 });
+    document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+      a.addEventListener('click', function (ev) {
+        var id = a.getAttribute('href');
+        if (!id || id === '#') return;
+        var target = document.querySelector(id);
+        if (!target) return;
+        ev.preventDefault();
+        lenis.scrollTo(target, { offset: -69, duration: 1.1 });
+      });
+    });
+  });
+})();
+</script>
+</body>
+</html>
