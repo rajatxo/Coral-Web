@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coral — preview · ThreeUI</title>
+<meta name="description" content="Design preview: Coral landing page set in the ThreeUI system. Near black, monospace, 5px corners, one amber accent.">
+<meta name="theme-color" content="#050507">
+<meta name="robots" content="noindex">
+<link rel="canonical" href="https://coralmusic.vercel.app/three.html">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23050507'/%3E%3Ccircle cx='32' cy='32' r='12' fill='none' stroke='%23F7F8F8' stroke-width='2.5'/%3E%3Ccircle cx='32' cy='32' r='3.5' fill='%23EAD29E'/%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+/* ── tokens, measured from threeui.com ──────────────── */
+:root{
+  --background:#050507;
+  --surface-low:#0A0B0D;
+  --surface:#101113;
+  --card:rgba(14,15,18,.86);
+
+  --on-surface:#8A8F98;
+  --on-surface-strong:#F7F8F8;
+  --on-surface-variant:#656970;   /* large text only */
+  --on-surface-muted:#62666D;     /* decorative / large only */
+
+  --primary:#EDEEF0;
+  --on-primary:#0A0B0D;
+  --secondary:#EAD29E;
+
+  --outline:rgba(255,255,255,.04);
+  --outline-variant:rgba(255,255,255,.08);
+  --card-border:rgba(255,255,255,.14);
+  --tint:rgba(255,255,255,.03);
+
+  --xs:4px; --sm:8px; --md:12px; --lg:18px; --xl:48px; --section:96px;
+
+  --r-sm:3px; --r-md:5px; --r-lg:7px; --r-card:9px;
+
+  --ease:cubic-bezier(.32,.72,0,1);
+  --t:.18s;
+  --page:24px;
+  --max:1040px;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;scroll-padding-top:96px}
+body{
+  background:var(--background);
+  color:var(--on-surface);
+  font-family:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+  font-size:14px;
+  line-height:1.7;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+::selection{background:var(--primary);color:var(--on-primary)}
+:focus-visible{outline:1px solid var(--secondary);outline-offset:2px;border-radius:var(--r-sm)}
+
+/* ── type ───────────────────────────────────────────── */
+.display{
+  font-size:44px;line-height:1.05;font-weight:400;letter-spacing:-.035em;
+  color:var(--on-surface-strong);
+}
+.h2{
+  font-size:24px;line-height:1.3;font-weight:400;letter-spacing:-.025em;
+  color:var(--on-surface-strong);text-wrap:balance;
+}
+.h3{font-size:15px;line-height:1.5;font-weight:500;letter-spacing:-.01em;color:var(--on-surface-strong)}
+.body{font-size:14px;line-height:1.7;color:var(--on-surface);text-wrap:pretty}
+.small{font-size:12px;line-height:1.67;color:var(--on-surface)}
+.label{
+  font-size:11px;line-height:1.4;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--on-surface);
+}
+.numeral{font-size:34px;line-height:1;font-weight:400;letter-spacing:-.03em;color:var(--on-surface-strong)}
+.dot{color:var(--secondary)}
+
+/* ── layout ─────────────────────────────────────────── */
+.wrap{width:100%;max-width:var(--max);margin:0 auto;padding-inline:var(--page)}
+.section{padding-block:var(--section);border-top:1px solid var(--outline)}
+.section-head{
+  display:grid;grid-template-columns:180px 1fr;gap:var(--sm) var(--xl);
+  align-items:start;margin-bottom:var(--xl);
+}
+.section-head p{margin-top:var(--sm);max-width:58ch}
+.rule{border:0;height:1px;background:var(--outline)}
+
+.skip{position:absolute;left:12px;top:-80px;z-index:200;background:var(--primary);color:var(--on-primary);padding:6px 12px;border-radius:var(--r-md);font-size:12px}
+.skip:focus{top:12px}
+
+/* ── top bar ────────────────────────────────────────── */
+.bar{
+  position:sticky;top:0;z-index:100;
+  border-bottom:1px solid var(--outline);
+  background:rgba(5,5,7,.82);
+  -webkit-backdrop-filter:blur(18px) saturate(120%);
+  backdrop-filter:blur(18px) saturate(120%);
+}
+.bar-in{
+  display:flex;align-items:center;gap:var(--md);
+  height:56px;
+}
+.brand{display:inline-flex;align-items:center;gap:var(--sm);font-size:13px;color:var(--on-surface-strong);letter-spacing:-.01em}
+.brand i{width:7px;height:7px;border-radius:50%;border:1px solid var(--on-surface-strong);display:block}
+.brand i::after{content:"";display:block;width:3px;height:3px;margin:1px;border-radius:50%;background:var(--secondary)}
+.bar nav{display:flex;align-items:center;gap:var(--xs);margin-left:var(--md)}
+.bar nav a{
+  font-size:12px;line-height:1;color:var(--on-surface);
+  padding:var(--sm) var(--md);border-radius:var(--r-md);
+  transition:color var(--t) var(--ease),background var(--t) var(--ease);
+}
+.bar nav a:hover{color:var(--on-surface-strong);background:var(--tint)}
+.bar .spacer{flex:1}
+.preview{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:11px;line-height:1;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--on-surface);padding:6px 8px;border:1px solid var(--outline-variant);
+  border-radius:var(--r-md);background:var(--tint);
+  transition:border-color var(--t) var(--ease),color var(--t) var(--ease);
+}
+.preview:hover{color:var(--on-surface-strong);border-color:rgba(255,255,255,.18)}
+.preview i{width:5px;height:5px;border-radius:50%;background:var(--secondary)}
+
+/* ── buttons ────────────────────────────────────────── */
+.btn{
+  display:inline-flex;align-items:center;gap:var(--sm);
+  height:32px;padding:6px 8px 6px 12px;
+  border-radius:var(--r-md);
+  font-size:12px;line-height:1;white-space:nowrap;
+  transition:background var(--t) var(--ease),color var(--t) var(--ease),border-color var(--t) var(--ease),transform var(--t) var(--ease);
+}
+.btn:active{transform:translateY(1px)}
+.btn-primary{background:var(--primary);color:var(--on-primary)}
+.btn-primary:hover{background:#FFFFFF}
+.btn-ghost{background:var(--tint);color:var(--on-surface-strong);border:1px solid var(--outline-variant)}
+.btn-ghost:hover{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.18)}
+.btn .k{font-size:10px;opacity:.6}
+
+/* ── hero ───────────────────────────────────────────── */
+.hero{padding-top:var(--section);padding-bottom:var(--section)}
+.hero-grid{display:grid;grid-template-columns:1fr 340px;gap:var(--xl);align-items:center}
+.meta-row{display:flex;flex-wrap:wrap;align-items:center;gap:var(--md);margin-bottom:var(--lg)}
+.meta-row span{display:inline-flex;align-items:center;gap:var(--sm);font-size:11px;line-height:1;letter-spacing:.1em;text-transform:uppercase}
+.meta-row span+span::before{content:"";width:3px;height:3px;border-radius:50%;background:var(--on-surface-variant);margin-right:var(--sm)}
+h1.display{margin-bottom:var(--md)}
+.hero p.body{max-width:46ch}
+.actions{display:flex;flex-wrap:wrap;align-items:center;gap:var(--sm);margin-top:var(--lg)}
+.facts{display:flex;flex-wrap:wrap;gap:var(--lg);margin-top:var(--xl);padding-top:var(--lg);border-top:1px solid var(--outline)}
+.facts div{display:flex;flex-direction:column;gap:2px}
+.facts b{font-size:13px;font-weight:400;color:var(--on-surface-strong)}
+.facts span{font-size:11px;line-height:1.4;letter-spacing:.08em;text-transform:uppercase}
+
+.shot-frame{
+  border:1px solid var(--outline-variant);border-radius:var(--r-lg);
+  background:var(--surface-low);padding:var(--sm);
+}
+.shot-frame img{border-radius:var(--r-md);width:100%;height:auto}
+.shot-frame figcaption{display:flex;justify-content:space-between;gap:var(--sm);padding:var(--sm) 2px 2px}
+.shot-frame figcaption span{font-size:11px;line-height:1.4}
+
+/* ── tagline ────────────────────────────────────────── */
+.tagline{padding-block:var(--section);border-top:1px solid var(--outline)}
+.tagline p{
+  max-width:22ch;font-size:clamp(24px,4vw,34px);line-height:1.3;
+  font-weight:400;letter-spacing:-.03em;color:var(--on-surface-strong);
+}
+.tagline .w{display:inline-block;color:#3C3F45;transition:color .3s var(--ease)}
+.tagline .w.lit{color:var(--on-surface-strong)}
+.tagline .w.lit:last-of-type{color:var(--secondary)}
+
+/* ── screens ────────────────────────────────────────── */
+.screens{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--md)}
+.screen{margin:0}
+.screen img{
+  width:100%;height:auto;aspect-ratio:3/4;object-fit:cover;
+  border:1px solid var(--outline-variant);border-radius:var(--r-md);
+  background:var(--surface-low);
+  transition:border-color var(--t) var(--ease);
+}
+.screen:hover img{border-color:rgba(255,255,255,.2)}
+.screen figcaption{display:flex;justify-content:space-between;gap:var(--sm);margin-top:var(--sm)}
+.screen figcaption b{font-size:12px;font-weight:400;color:var(--on-surface-strong)}
+.screen figcaption span{font-size:11px;color:var(--on-surface)}
+
+/* ── feature rows ───────────────────────────────────── */
+.rows{border-top:1px solid var(--outline)}
+.row{
+  display:grid;grid-template-columns:44px 220px 1fr;gap:var(--md) var(--lg);
+  align-items:baseline;
+  padding-block:var(--lg);
+  border-bottom:1px solid var(--outline);
+  transition:background var(--t) var(--ease);
+}
+.row:hover{background:rgba(255,255,255,.015)}
+.row .i{font-size:11px;line-height:1.4;color:var(--on-surface)}
+.row p{max-width:56ch}
+
+/* ── steps ──────────────────────────────────────────── */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--md)}
+.step{
+  padding:var(--lg);
+  border:1px solid var(--outline);border-radius:var(--r-md);
+  background:var(--surface-low);
+}
+.step .n{font-size:11px;line-height:1.4;letter-spacing:.1em;color:var(--secondary)}
+.step h3{margin-top:var(--lg)}
+.step p{margin-top:var(--sm)}
+
+/* ── player split ───────────────────────────────────── */
+.split{display:grid;grid-template-columns:1fr 320px;gap:var(--xl);align-items:center}
+.points{list-style:none;margin-top:var(--xl);border-top:1px solid var(--outline)}
+.points li{
+  display:grid;grid-template-columns:36px 1fr;gap:var(--md);
+  padding-block:var(--md);border-bottom:1px solid var(--outline);
+  align-items:baseline;
+}
+.points .i{font-size:11px;color:var(--on-surface)}
+.points h4{font-size:13px;font-weight:400;color:var(--on-surface-strong)}
+.points p{margin-top:2px;font-size:13px;line-height:1.65}
+
+.player{border:1px solid var(--outline-variant);border-radius:var(--r-lg);background:var(--surface-low);padding:var(--md)}
+.player-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--md)}
+.chip{
+  font-size:10px;line-height:1;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--on-surface);border:1px solid var(--outline-variant);border-radius:var(--r-sm);
+  padding:4px 6px;
+}
+.art{position:relative;aspect-ratio:1;border-radius:var(--r-md);border:1px solid var(--outline-variant);background:var(--surface);overflow:hidden}
+.art b,.art i{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);border-radius:50%;border:1px solid rgba(255,255,255,.1)}
+.art b{width:62%;height:62%}
+.art i{width:34%;height:34%}
+.art .core{width:16%;height:16%;background:var(--primary);border:0}
+.track{display:flex;justify-content:space-between;align-items:flex-end;gap:var(--sm);margin-top:var(--md)}
+.track .t{font-size:13px;color:var(--on-surface-strong)}
+.track .a{font-size:11px;color:var(--on-surface);margin-top:2px}
+.time{font-size:11px;color:var(--on-surface)}
+.bar{position:relative;height:1px;background:rgba(255,255,255,.12);margin-top:var(--md)}
+.bar b{position:absolute;left:0;top:0;height:1px;width:44%;background:var(--primary)}
+.bar b::after{content:"";position:absolute;right:-2px;top:50%;transform:translateY(-50%);width:5px;height:5px;border-radius:50%;background:var(--secondary)}
+.controls{display:flex;align-items:center;justify-content:space-between;margin-top:var(--md)}
+.ic{width:32px;height:32px;display:grid;place-items:center;border-radius:var(--r-md);color:var(--on-surface);border:1px solid transparent;transition:color var(--t) var(--ease),border-color var(--t) var(--ease)}
+.ic:hover{color:var(--on-surface-strong);border-color:var(--outline-variant)}
+.ic.play{background:var(--primary);color:var(--on-primary)}
+
+/* ── faq ────────────────────────────────────────────── */
+.faq{border-top:1px solid var(--outline)}
+.qa{border-bottom:1px solid var(--outline)}
+.qa summary{
+  list-style:none;cursor:pointer;
+  display:flex;align-items:baseline;justify-content:space-between;gap:var(--lg);
+  padding-block:var(--md);
+  font-size:13px;line-height:1.6;color:var(--on-surface-strong);
+  transition:color var(--t) var(--ease);
+}
+.qa summary::-webkit-details-marker{display:none}
+.qa summary:hover{color:#FFFFFF}
+.qa summary::after{content:"+";font-size:13px;color:var(--on-surface);transition:color var(--t) var(--ease)}
+.qa[open] summary::after{content:"−";color:var(--secondary)}
+.qa p{padding-bottom:var(--md);max-width:64ch;font-size:13px;line-height:1.7}
+
+/* ── cta ────────────────────────────────────────────── */
+.cta-card{
+  border:1px solid var(--card-border);
+  border-radius:var(--r-card);
+  background:rgba(14,15,18,.86);
+  padding:28px;
+  display:grid;grid-template-columns:1fr auto;gap:var(--lg);align-items:center;
+}
+.cta-card p{margin-top:var(--sm);max-width:50ch}
+.cta-card .actions{margin-top:0}
+
+/* ── footer ─────────────────────────────────────────── */
+.footer{border-top:1px solid var(--outline);padding-block:var(--lg) var(--xl)}
+.footer-in{display:flex;justify-content:space-between;align-items:center;gap:var(--md);flex-wrap:wrap}
+.footer p{font-size:11px;line-height:1.6;color:var(--on-surface)}
+.footer nav{display:flex;gap:var(--xs)}
+.footer nav a{font-size:11px;padding:6px 8px;border-radius:var(--r-sm);color:var(--on-surface);transition:color var(--t) var(--ease),background var(--t) var(--ease)}
+.footer nav a:hover{color:var(--on-surface-strong);background:var(--tint)}
+
+/* ── reveal ─────────────────────────────────────────── */
+.rv{opacity:0;transform:translateY(12px);transition:opacity .3s var(--ease),transform .3s var(--ease)}
+.rv.in{opacity:1;transform:none}
+
+/* ── responsive ─────────────────────────────────────── */
+@media (max-width:900px){
+  :root{--section:64px;--page:20px}
+  .display{font-size:32px;line-height:1.15}
+  .hero-grid{grid-template-columns:1fr;gap:var(--xl)}
+  .shot-frame{order:-1;max-width:360px}
+  .section-head{grid-template-columns:1fr;gap:var(--sm)}
+  .split{grid-template-columns:1fr;gap:var(--xl)}
+  .player{max-width:340px}
+  .row{grid-template-columns:36px 1fr;gap:var(--xs) var(--md)}
+  .row p{grid-column:2}
+  .cta-card{grid-template-columns:1fr}
+  .bar nav{display:none}
+}
+@media (max-width:640px){
+  :root{--page:16px}
+  .screens,.steps{grid-template-columns:1fr}
+  .facts{gap:var(--md)}
+  .preview span{display:none}
+  .tagline p{max-width:18ch}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .rv{opacity:1;transform:none;transition:none}
+  .tagline .w{transition:none;color:var(--on-surface-strong)}
+  *{transition:none!important}
+}
+</style>
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="bar">
+  <div class="wrap bar-in">
+    <a class="brand" href="index.html" aria-label="Coral"><i aria-hidden="true"></i>Coral</a>
+    <nav aria-label="Sections">
+      <a href="#screens">Screens</a>
+      <a href="#features">Features</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <span class="spacer"></span>
+    <a class="preview" href="index.html" title="Back to the current site"><i aria-hidden="true"></i><span>Preview</span></a>
+    <a class="btn btn-primary" href="https://t.me/rajat_xo" target="_blank" rel="noopener">Telegram <span class="k">↗</span></a>
+  </div>
+</header>
+
+<main id="main">
+
+  <section class="hero">
+    <div class="wrap">
+      <div class="hero-grid">
+        <div>
+          <div class="meta-row">
+            <span>Local player</span>
+            <span>Android 10+</span>
+            <span>Coming soon</span>
+          </div>
+          <h1 class="display">Coral<span class="dot">.</span></h1>
+          <p class="body">
+            Your own music, without the noise. Plays the files already on your phone:
+            a playlist wheel, lyrics that keep time, and 8D audio you can tune.
+          </p>
+          <div class="actions">
+            <a class="btn btn-primary" href="https://t.me/rajat_xo" target="_blank" rel="noopener">Get the build <span class="k">↗</span></a>
+            <a class="btn btn-ghost" href="#screens">Screens <span class="k">↓</span></a>
+          </div>
+
+          <div class="facts">
+            <div><b>0</b><span>accounts</span></div>
+            <div><b>0</b><span>uploads</span></div>
+            <div><b>1</b><span>APK</span></div>
+            <div><b>10+</b><span>Android versions</span></div>
+          </div>
+        </div>
+
+        <figure class="shot-frame">
+          <img src="assets/images/screens/effect.webp"
+               alt="Coral 8D screen: a glowing sphere inside rings of space names, above a head wearing headphones"
+               width="720" height="960" fetchpriority="high" decoding="async">
+          <figcaption><span>The 8D screen</span><span class="label">Spatial</span></figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="tagline" aria-label="What Coral is for">
+    <div class="wrap">
+      <p id="tagline">No feed. No algorithm. No account. Just your library, played properly.</p>
+    </div>
+  </section>
+
+  <section class="section" id="screens">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="label">01 / Screens</span>
+        <div class="rv">
+          <h2 class="h2">Made to be looked at.</h2>
+          <p class="body">Every screen is one gesture deep. What you came for sits in the middle, and nothing asks for attention it has not earned.</p>
+        </div>
+      </div>
+
+      <div class="screens">
+        <figure class="screen rv">
+          <img src="assets/images/screens/library.webp"
+               alt="Coral library: playlists arranged along an arc around a sphere" width="720" height="960" loading="lazy" decoding="async">
+          <figcaption><b>The library</b><span>01</span></figcaption>
+        </figure>
+        <figure class="screen rv">
+          <img src="assets/images/screens/effect.webp"
+               alt="Coral 8D audio: a warm sphere inside rings of space names" width="720" height="960" loading="lazy" decoding="async">
+          <figcaption><b>8D audio</b><span>02</span></figcaption>
+        </figure>
+        <figure class="screen rv">
+          <img src="assets/images/screens/head.webp"
+               alt="Close view of the Coral listener, a glossy head wearing headphones" width="720" height="960" loading="lazy" decoding="async">
+          <figcaption><b>The listener</b><span>03</span></figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="features">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="label">02 / Features</span>
+        <div class="rv">
+          <h2 class="h2">Quietly good where it counts.</h2>
+          <p class="body">Each of these exists because playing an album on a phone is still, somehow, worse than it should be.</p>
+        </div>
+      </div>
+
+      <div class="rows">
+        <div class="row rv">
+          <span class="i">01</span>
+          <h3 class="h3">A wheel, not a list</h3>
+          <p class="body">Playlists sit on a semicircle you spin with a thumb. Two wheel styles, and a search that rotates to the match instead of jumping to it.</p>
+        </div>
+        <div class="row rv">
+          <span class="i">02</span>
+          <h3 class="h3">Lyrics that keep time</h3>
+          <p class="body">Word level timing from open lyric databases, lined up per singer, with breaks that breathe instead of sitting still.</p>
+        </div>
+        <div class="row rv">
+          <span class="i">03</span>
+          <h3 class="h3">8D, with a dial</h3>
+          <p class="body">Orbit speed and spatial ambience are yours to set. The mix circles your head as fast or as slowly as you like, and it turns off when you do.</p>
+        </div>
+        <div class="row rv">
+          <span class="i">04</span>
+          <h3 class="h3">Colour from the cover</h3>
+          <p class="body">Artwork tints the interface, then fades back to black so the music stays the bright thing on the screen.</p>
+        </div>
+        <div class="row rv">
+          <span class="i">05</span>
+          <h3 class="h3">Artist pages that know something</h3>
+          <p class="body">A short biography and a portrait from MusicBrainz and Wikipedia, so the page is not just a name.</p>
+        </div>
+        <div class="row rv">
+          <span class="i">06</span>
+          <h3 class="h3">Nothing leaves the phone</h3>
+          <p class="body">The library is read locally and stays there. No sign in, no sync, no copy in somebody else's cloud.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="how">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="label">03 / How it works</span>
+        <div class="rv">
+          <h2 class="h2">Three steps, then music.</h2>
+          <p class="body">No wizard, no import screen, no library to rebuild by hand.</p>
+        </div>
+      </div>
+
+      <div class="steps">
+        <div class="step rv">
+          <span class="n">STEP 01</span>
+          <h3 class="h3">Point it at your phone</h3>
+          <p class="small">Coral reads the audio Android already knows about. Nothing is copied, converted or uploaded.</p>
+        </div>
+        <div class="step rv">
+          <span class="n">STEP 02</span>
+          <h3 class="h3">Build a wheel</h3>
+          <p class="small">Make a playlist with a name, a cover and the songs you want. It joins the wheel, ready to spin.</p>
+        </div>
+        <div class="step rv">
+          <span class="n">STEP 03</span>
+          <h3 class="h3">Spin, tap, play</h3>
+          <p class="small">Drag the wheel to browse, tap the centre to open. The mini player keeps controls one thumb away.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="player">
+    <div class="wrap split">
+      <div>
+        <span class="label">04 / The player</span>
+        <h2 class="h2" style="margin-top:12px">One screen you stay on.</h2>
+        <ul class="points">
+          <li><span class="i">01</span><div><h4>Built around the album</h4><p class="body" style="font-size:13px">Cover, colour and the next track, arranged so you never think about where anything is.</p></div></li>
+          <li><span class="i">02</span><div><h4>Controls that stay put</h4><p class="body" style="font-size:13px">Play sits in the middle. Everything else moves around it, never the other way round.</p></div></li>
+          <li><span class="i">03</span><div><h4>Nothing between you and the song</h4><p class="body" style="font-size:13px">No feed, no recommendations, no upsell. Open it, press play, put the phone down.</p></div></li>
+        </ul>
+      </div>
+
+      <div class="player rv" aria-hidden="true">
+        <div class="player-top">
+          <span class="label">Now playing</span>
+          <span class="chip">On device</span>
+        </div>
+        <div class="art"><b></b><i></i><span class="core"></span></div>
+        <div class="track">
+          <div><p class="t">Nocturne in C</p><p class="a">Aurelia</p></div>
+          <span class="time">2:14 / 4:48</span>
+        </div>
+        <div class="bar"><b></b></div>
+        <div class="controls">
+          <span class="ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5"/><path d="M4 20 21 3"/><path d="M21 16v5h-5"/><path d="M15 15l6 6"/><path d="M4 4l5 5"/></svg></span>
+          <span class="ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h2v14H6zM20 5l-11 7 11 7z"/></svg></span>
+          <span class="ic play"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4l13 8-13 8z"/></svg></span>
+          <span class="ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M16 5h2v14h-2zM4 5l11 7-11 7z"/></svg></span>
+          <span class="ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></svg></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="faq">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="label">05 / Questions</span>
+        <div class="rv">
+          <h2 class="h2">The short answers.</h2>
+          <p class="body">Anything else, ask on Telegram and you get a reply from the person who built it.</p>
+        </div>
+      </div>
+
+      <div class="faq">
+        <details class="qa"><summary>What is Coral?</summary><p class="body">A music player for Android that plays the audio already on your device, built around a playlist wheel with timed lyrics, artist pages and spatial 8D audio.</p></details>
+        <details class="qa"><summary>Is it on the Play Store yet?</summary><p class="body">Not yet. Coral is in final testing. The build goes to the Telegram channel first, then to the store.</p></details>
+        <details class="qa"><summary>Do I need an account?</summary><p class="body">No. There is no sign in, no profile and no email required. Open the app and your library is there.</p></details>
+        <details class="qa"><summary>Does it upload my music?</summary><p class="body">No. Your library is read through Android's media library and never leaves the device. The only network calls are for lyrics, artist biographies and album details, and they ask for a song or artist name, not your files.</p></details>
+        <details class="qa"><summary>Which Android versions work?</summary><p class="body">Android 10 and newer. The interface, the blur effects and the 8D processor are built for that range.</p></details>
+        <details class="qa"><summary>Does 8D audio change the file?</summary><p class="body">No. It is processed live as the track plays, so the original file is untouched. Set how fast the mix orbits and how wide the space feels, or turn it off entirely.</p></details>
+        <details class="qa"><summary>Does it work offline?</summary><p class="body">Playback does, fully. Lyrics, artist pages and album details need a connection because they come from public databases.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="cta-card rv">
+        <div>
+          <span class="label">In final testing</span>
+          <h2 class="h2" style="margin-top:8px">Coming soon.</h2>
+          <p class="body">Leave a message on Telegram and you get the build the day it lands, plus a say in what gets fixed next.</p>
+        </div>
+        <div class="actions">
+          <a class="btn btn-primary" href="https://t.me/rajat_xo" target="_blank" rel="noopener">Get the build <span class="k">↗</span></a>
+          <a class="btn btn-ghost" href="index.html">Current site <span class="k">↗</span></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="wrap footer-in">
+    <p>&copy; 2026 Coral. Design preview in the ThreeUI system.</p>
+    <nav aria-label="Elsewhere and legal">
+      <a href="https://t.me/rajat_xo" target="_blank" rel="noopener">Telegram</a>
+      <a href="https://github.com/rajatxo" target="_blank" rel="noopener">GitHub</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="terms.html">Terms</a>
+    </nav>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var items = document.querySelectorAll('.rv');
+  if (!reduced && 'IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -6% 0px' });
+    items.forEach(function (el) { io.observe(el); });
+  } else {
+    items.forEach(function (el) { el.classList.add('in'); });
+  }
+
+  var tag = document.getElementById('tagline');
+  if (tag) {
+    var words = tag.textContent.trim().split(/\s+/);
+    tag.textContent = '';
+    var spans = words.map(function (w) {
+      var s = document.createElement('span');
+      s.className = 'w';
+      s.textContent = w;
+      tag.appendChild(s);
+      tag.appendChild(document.createTextNode(' '));
+      return s;
+    });
+    if (reduced) {
+      spans.forEach(function (s) { s.classList.add('lit'); });
+    } else {
+      var line = window.innerHeight * 0.84, tick = false;
+      var run = function () {
+        tick = false;
+        spans.forEach(function (s) {
+          if (!s.classList.contains('lit') && s.getBoundingClientRect().top < line) s.classList.add('lit');
+        });
+      };
+      var onScroll = function () {
+        if (tick) return;
+        tick = true;
+        window.requestAnimationFrame(run);
+      };
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll);
+      run();
+    }
+  }
+})();
+</script>
+</body>
+</html>
