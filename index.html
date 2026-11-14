@@ -3,707 +3,566 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Coral — your own music, without the noise</title>
-<meta name="description" content="Coral is a local music player for Android. A playlist wheel instead of a list, lyrics that keep time, and 8D audio you can tune. No account, nothing uploaded.">
+<title>Coral — Find Your Sound</title>
+<meta name="description" content="Coral is a premium Android music player. Local files, gapless playback, lyrics that keep time. Coming soon.">
 <meta name="theme-color" content="#000000">
-<link rel="canonical" href="https://coralmusic.vercel.app/">
 
-<meta property="og:title" content="Coral — your own music, without the noise">
-<meta property="og:description" content="A local music player for Android. Playlist wheel, timed lyrics, 8D audio. No account, nothing uploaded.">
+<meta property="og:title" content="Coral — Find Your Sound">
+<meta property="og:description" content="A premium Android music player. Local files, gapless playback, lyrics that keep time.">
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://coralmusic.vercel.app/">
 <meta property="og:image" content="https://coralmusic.vercel.app/assets/images/screens/effect.webp">
-<meta name="twitter:card" content="summary_large_image">
 
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23000'/%3E%3Ccircle cx='32' cy='32' r='13' fill='none' stroke='%23F5F5F7' stroke-width='2.5'/%3E%3Ccircle cx='32' cy='32' r='4' fill='%23F5F5F7'/%3E%3C/svg%3E">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Rethink+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
-/* ── tokens ─────────────────────────────────────────── */
 :root{
-  /* colour: dark mode set from the design rules, flat surfaces only */
   --bg:#000000;
-  --surface-1:#181818;
-  --surface-2:#1F1F1F;
-  --surface-3:#272727;
-  --text:#F5F5F7;
-  --text-strong:#FFFFFF;
-  --text-variant:#D2D2D4;
-  --text-muted:#A1A1A3;
-  --line:rgba(255,255,255,.08);
-  --line-strong:rgba(255,255,255,.16);
+  --on:#F5F5F7;
+  --strong:#FFFFFF;
+  --variant:#D2D2D4;
+  --muted:#A1A1A3;
+  --outline:rgba(255,255,255,.09);
+  --outline-2:rgba(255,255,255,.18);
+  --wash:rgba(255,255,255,.035);
+  --wash-2:rgba(255,255,255,.06);
 
-  /* spacing */
-  --s-25:2px; --s-50:4px; --s-75:8px; --s-100:12px; --s-200:16px;
-  --s-300:24px; --s-400:32px; --s-500:40px; --s-600:48px;
-  --s-700:64px; --s-800:80px; --s-900:96px;
+  --card-shadow:
+    rgba(255,255,255,.16) 0 1px 0 0 inset,
+    rgba(255,255,255,.03) 0 -1px 0 0 inset,
+    rgba(0,0,0,.35) 0 1px 1px 0,
+    rgba(0,0,0,.7) 0 24px 60px -18px;
 
-  /* radius */
-  --r-sm:8px; --r-md:12px; --r-lg:16px; --r-xl:24px; --r-full:9999px;
+  --primary-shadow:
+    rgb(255,255,255) 0 1px 0 0 inset,
+    rgba(0,0,0,.14) 0 -1px 0 0 inset,
+    rgba(255,255,255,.45) 0 14px 40px -12px;
 
-  /* motion */
-  --ease:cubic-bezier(.22,1,.36,1);
-
-  --page:var(--s-600);
-  --max:1200px;
+  --ease:cubic-bezier(.16,1,.3,1);
+  --page:64px;
+  --section:81px;
+  --radius:28px;
 }
 
 *{margin:0;padding:0;box-sizing:border-box}
-html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;scroll-padding-top:var(--s-900)}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
 body{
   background:var(--bg);
-  color:var(--text);
-  font-family:'Geist',system-ui,-apple-system,'Segoe UI',sans-serif;
-  font-size:16px;
+  color:var(--on);
+  font-family:'Rethink Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+  font-size:17px;
   line-height:1.5;
   overflow-x:hidden;
   -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
 }
-img{display:block;max-width:100%}
 a{color:inherit;text-decoration:none}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 ::selection{background:#F5F5F7;color:#000}
-:focus-visible{outline:2px solid rgba(245,245,247,.75);outline-offset:3px;border-radius:var(--r-full)}
+:focus-visible{outline:1.5px solid rgba(245,245,247,.7);outline-offset:3px;border-radius:9999px}
 
-/* ── type styles ────────────────────────────────────── */
-.heading-1{font-size:60px;line-height:1;font-weight:600;letter-spacing:-.045em;text-wrap:balance}
-.heading-2{font-size:48px;line-height:1;font-weight:600;letter-spacing:-.04em;text-wrap:balance}
-.heading-3{font-size:36px;line-height:40px;font-weight:600;letter-spacing:-.035em;text-wrap:balance}
-.heading-4{font-size:30px;line-height:36px;font-weight:600;letter-spacing:-.03em;text-wrap:balance}
-.heading-5{font-size:24px;line-height:32px;font-weight:600;letter-spacing:-.025em}
-.heading-6{font-size:20px;line-height:28px;font-weight:600;letter-spacing:-.02em}
-.title-2{font-size:18px;line-height:28px;font-weight:500}
-.title-3{font-size:16px;line-height:24px;font-weight:500}
-.body-3{font-size:16px;line-height:24px;font-weight:400;color:var(--text-variant);text-wrap:pretty}
-.body-6{font-size:14px;line-height:20px;font-weight:400;color:var(--text-muted);text-wrap:pretty}
-.caption-2{font-size:14px;line-height:20px;font-weight:400;color:var(--text-muted)}
-.caption-5{font-size:12px;line-height:16px;font-weight:400;color:var(--text-muted)}
-.button-md{font-size:16px;line-height:24px;font-weight:600}
-.button-sm{font-size:14px;line-height:20px;font-weight:600}
+/* ── type ───────────────────────────────────────────── */
+.display{
+  font-size:clamp(64px,11.6vw,152.5px);
+  font-weight:700;
+  line-height:.9;
+  letter-spacing:-.055em;
+}
+.h-lg{font-size:clamp(36px,6.2vw,89px);font-weight:600;line-height:.98;letter-spacing:-.045em}
+.h-md{font-size:clamp(30px,4.3vw,62px);font-weight:600;line-height:.98;letter-spacing:-.045em}
+.h-sm{font-size:clamp(24px,3vw,43px);font-weight:600;line-height:1;letter-spacing:-.04em}
+.lead{font-size:clamp(17px,1.4vw,19px);line-height:1.6;color:var(--variant)}
+.body{font-size:17px;line-height:1.5;color:var(--variant)}
+.small{font-size:14px;line-height:1.45;color:var(--muted)}
+.caption{font-size:13px;line-height:1.5;color:var(--muted)}
+.label{font-size:14px;font-weight:600;line-height:1.5;letter-spacing:-.005em}
 
 /* ── layout ─────────────────────────────────────────── */
-.wrap{width:100%;max-width:var(--max);margin:0 auto;padding-inline:var(--page)}
-.section{padding-block:var(--s-900)}
-.rule{border-top:1px solid var(--line)}
-
-.skip{
-  position:absolute;left:var(--s-200);top:-100px;z-index:200;
-  background:var(--text);color:#000;padding:var(--s-75) var(--s-200);
-  border-radius:var(--r-md);
-  transition:top .2s var(--ease);
+.wrap{width:100%;max-width:1408px;margin:0 auto;padding-inline:var(--page)}
+.section{padding-block:var(--section)}
+.rule{border-top:1px solid var(--outline)}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:9px;
+  padding:8px 15px 8px 12px;
+  border-radius:9999px;
+  border:1px solid var(--outline);
+  background:rgba(255,255,255,.02);
+  color:var(--muted);
+  font-size:13px;
+  line-height:1;
 }
-.skip:focus{top:var(--s-200)}
+.eyebrow i{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--on);
+  box-shadow:0 0 0 3px rgba(255,255,255,.08);
+  animation:blip 2.8s ease-in-out infinite;
+}
+@keyframes blip{0%,100%{opacity:.45}50%{opacity:1}}
 
 /* ── nav ────────────────────────────────────────────── */
 .nav{
-  position:fixed;top:var(--s-200);left:50%;transform:translateX(-50%);
-  z-index:100;
-  display:flex;align-items:center;gap:var(--s-200);
-  padding:var(--s-75) var(--s-75) var(--s-75) var(--s-300);
-  border:1px solid var(--line);
-  border-radius:var(--r-full);
-  background:rgba(24,24,24,.72);
-  -webkit-backdrop-filter:blur(20px) saturate(120%);
-  backdrop-filter:blur(20px) saturate(120%);
-  transition:border-color .3s var(--ease),background .3s var(--ease);
+  position:sticky;top:0;z-index:50;
+  background:rgba(0,0,0,.72);
+  -webkit-backdrop-filter:blur(22px) saturate(120%);
+  backdrop-filter:blur(22px) saturate(120%);
+  border-bottom:1px solid var(--outline);
 }
-.nav:hover{border-color:var(--line-strong)}
-.brand{display:inline-flex;align-items:center;gap:var(--s-100)}
+.nav-in{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:24px;height:69px;
+}
+.brand{display:inline-flex;align-items:center;gap:11px}
 .brand-mark{
-  width:22px;height:22px;border-radius:50%;
-  border:1.5px solid var(--text);
-  display:grid;place-items:center;flex:none;
+  width:26px;height:26px;border-radius:50%;
+  border:1.5px solid var(--on);
+  display:grid;place-items:center;
 }
-.brand-mark::after{content:"";width:6px;height:6px;border-radius:50%;background:var(--text)}
-.brand-name{font-size:16px;font-weight:600;letter-spacing:-.02em}
-.nav-links{display:flex;align-items:center;gap:var(--s-25)}
+.brand-mark::after{content:"";width:7px;height:7px;border-radius:50%;background:var(--on)}
+.brand-name{font-size:18px;font-weight:600;letter-spacing:-.03em}
+.nav-links{display:flex;align-items:center;gap:2px}
 .nav-link{
-  font-size:14px;line-height:20px;font-weight:500;color:rgba(245,245,247,.82);
-  padding:var(--s-75) var(--s-100);border-radius:var(--r-full);
-  transition:background .2s var(--ease),color .2s var(--ease);
+  font-size:14.5px;color:rgba(245,245,247,.86);
+  padding:9px 14px;border-radius:9999px;
+  transition:background .25s ease,color .25s ease;
 }
-.nav-link:hover{background:rgba(255,255,255,.06);color:var(--text-strong)}
-.nav-link[aria-current="page"]{color:var(--text-strong);background:rgba(255,255,255,.06)}
-
-/* menu toggle, only on small screens */
-.menu-btn{
-  display:none;width:40px;height:40px;border-radius:var(--r-full);
-  place-items:center;flex:none;
-}
-.menu-btn .bars{display:block;width:16px;height:10px;position:relative}
-.menu-btn .bars i{
-  position:absolute;left:0;width:16px;height:1.5px;border-radius:var(--r-full);
-  background:var(--text);
-  transition:transform .4s var(--ease),top .4s var(--ease),opacity .2s linear;
-}
-.menu-btn .bars i:first-child{top:0}
-.menu-btn .bars i:last-child{top:8.5px}
-.menu-btn[aria-expanded="true"] .bars i:first-child{top:4px;transform:rotate(45deg)}
-.menu-btn[aria-expanded="true"] .bars i:last-child{top:4px;transform:rotate(-45deg)}
-
-/* mobile panel */
-.panel{
-  position:fixed;inset:0;z-index:95;
-  background:rgba(0,0,0,.94);
-  -webkit-backdrop-filter:blur(28px);
-  backdrop-filter:blur(28px);
-  display:flex;flex-direction:column;justify-content:center;
-  padding:var(--s-800) var(--s-400);
-  opacity:0;visibility:hidden;
-  transition:opacity .4s var(--ease),visibility .4s var(--ease);
-}
-.panel.open{opacity:1;visibility:visible}
-.panel a{
-  font-size:30px;line-height:36px;font-weight:600;letter-spacing:-.03em;
-  padding-block:var(--s-200);
-  color:var(--text-muted);
-  transform:translateY(var(--s-300));opacity:0;
-  transition:transform .5s var(--ease),opacity .5s var(--ease),color .2s var(--ease);
-  transition-delay:0s;
-}
-.panel.open a{transform:none;opacity:1}
-.panel.open a:nth-child(1){transition-delay:.06s}
-.panel.open a:nth-child(2){transition-delay:.12s}
-.panel.open a:nth-child(3){transition-delay:.18s}
-.panel.open a:nth-child(4){transition-delay:.24s}
-.panel.open a:nth-child(5){transition-delay:.3s}
-.panel a:hover,.panel a:focus-visible{color:var(--text-strong)}
+.nav-link:hover{background:var(--wash-2);color:var(--strong)}
 
 /* ── buttons ────────────────────────────────────────── */
 .btn{
-  display:inline-flex;align-items:center;justify-content:center;gap:var(--s-75);
-  border-radius:var(--r-full);white-space:nowrap;
-  padding:var(--s-100) var(--s-300);          /* 12px / 24px */
-  transition:transform .5s var(--ease),background .3s var(--ease),border-color .3s var(--ease),color .3s var(--ease);
+  display:inline-flex;align-items:center;justify-content:center;gap:9px;
+  border-radius:9999px;white-space:nowrap;
+  transition:transform .25s var(--ease),background .25s ease,box-shadow .25s ease,color .25s ease;
 }
-.nav .btn{padding:var(--s-75) var(--s-200)}   /* compact inside the bar */
-.btn:active{transform:scale(.98)}
 .btn-primary{
-  background:var(--text);color:#000;
-  box-shadow:0 12px 32px -14px rgba(255,255,255,.5);
+  height:43px;padding:11px 19px;
+  background:var(--on);color:#000;
+  font-size:14px;font-weight:600;letter-spacing:-.005em;
+  box-shadow:var(--primary-shadow);
 }
-.btn-primary:hover{background:var(--text-strong);transform:translateY(-1px)}
-.btn-ghost{
-  border:1px solid var(--line);
-  color:var(--text-strong);
-  background:var(--surface-1);
+.btn-primary:hover{transform:translateY(-1px);background:var(--strong)}
+.btn-secondary{
+  height:58px;padding:17px 30px;
+  border:1px solid var(--outline);
+  color:var(--strong);
+  font-size:16px;font-weight:600;letter-spacing:-.005em;
+  background:rgba(255,255,255,.015);
+  box-shadow:var(--card-shadow);
 }
-.btn-ghost:hover{background:var(--surface-2);border-color:var(--line-strong);transform:translateY(-1px)}
-.btn-arrow{font-size:14px;line-height:1}
+.btn-secondary:hover{background:var(--wash-2);transform:translateY(-1px)}
+.btn-arrow{font-size:15px;line-height:1;transform:translateY(-.5px)}
 
 /* ── hero ───────────────────────────────────────────── */
 .hero{
   position:relative;
-  padding-top:calc(var(--s-900) + var(--s-700));
-  padding-bottom:var(--s-900);
+  padding-top:96px;
+  padding-bottom:var(--section);
+  min-height:calc(100svh - 69px);
+  display:flex;flex-direction:column;justify-content:flex-end;
   overflow:hidden;
 }
-.rings{position:absolute;right:-18%;top:6%;width:70vmin;height:70vmin;pointer-events:none}
+.hero::before{
+  content:"";position:absolute;inset:-10% -20% auto;height:70%;
+  background:radial-gradient(ellipse at 50% 0%,rgba(255,255,255,.055),transparent 62%);
+  pointer-events:none;
+}
+.rings{position:absolute;left:50%;top:38%;transform:translate(-50%,-50%);pointer-events:none;z-index:0}
 .rings span{
   position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
-  border:1px solid rgba(255,255,255,.06);border-radius:50%;
+  border:1px solid rgba(255,255,255,.055);
+  border-radius:50%;
 }
-.rings span:nth-child(1){width:100%;height:100%}
-.rings span:nth-child(2){width:72%;height:72%}
-.rings span:nth-child(3){width:44%;height:44%}
-.rings span:nth-child(4){width:18%;height:18%;border-color:rgba(255,255,255,.14)}
-
+.rings span:nth-child(1){width:132vmin;height:132vmin;opacity:.55}
+.rings span:nth-child(2){width:96vmin;height:96vmin;opacity:.7}
+.rings span:nth-child(3){width:60vmin;height:60vmin}
+.rings span:nth-child(4){width:30vmin;height:30vmin;opacity:.8}
 .hero-grid{
   position:relative;z-index:1;
-  display:grid;grid-template-columns:1fr .82fr;
-  gap:var(--s-800);align-items:center;
+  display:grid;grid-template-columns:1.12fr .88fr;gap:32px;align-items:end;
 }
-.eyebrow{
-  display:inline-flex;align-items:center;gap:var(--s-75);
-  padding:var(--s-50) var(--s-100);
-  border:1px solid var(--line);border-radius:var(--r-full);
-  color:var(--text-muted);
-  font-size:12px;line-height:16px;font-weight:500;
-}
-.eyebrow i{width:5px;height:5px;border-radius:50%;background:var(--text);opacity:.6}
-.hero h1{
-  margin-top:var(--s-300);
-  max-width:680px;
-  background:linear-gradient(90deg,#FFFFFF,#9B9B9B);
-  -webkit-background-clip:text;background-clip:text;
-  -webkit-text-fill-color:transparent;
-}
+.hero-left .eyebrow{margin-bottom:26px}
 .hero-sub{
-  margin-top:var(--s-300);max-width:680px;
-  font-size:18px;line-height:28px;font-weight:400;color:var(--text-muted);
-  text-wrap:pretty;
+  margin-top:22px;
+  font-size:clamp(19px,2.1vw,28px);
+  font-weight:400;letter-spacing:-.02em;
+  color:var(--muted);
 }
-.actions{display:flex;flex-wrap:wrap;align-items:center;gap:var(--s-100);margin-top:var(--s-500)}
+.hero-right{display:flex;flex-direction:column;gap:30px;padding-bottom:10px}
+.hero-right .lead{max-width:42ch}
+.actions{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
 .hero-meta{
-  display:flex;flex-wrap:wrap;gap:var(--s-50) var(--s-300);
-  margin-top:var(--s-600);
-  font-size:14px;line-height:20px;color:var(--text-muted);
+  display:flex;flex-wrap:wrap;gap:8px 22px;
+  margin-top:52px;padding-top:22px;
+  border-top:1px solid var(--outline);
+  font-size:13px;color:var(--muted);
 }
-.hero-meta span{display:inline-flex;align-items:center;gap:var(--s-75)}
-.hero-meta span::before{content:"";width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.32)}
+.hero-meta span{display:inline-flex;align-items:center;gap:8px}
+.hero-meta span::before{content:"";width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.35)}
 
-.hero-art{
-  position:relative;
-  border:1px solid var(--line);
-  border-radius:var(--r-xl);
-  background:var(--surface-1);
-  padding:var(--s-100);
+/* ── ticker ─────────────────────────────────────────── */
+.ticker{
+  border-block:1px solid var(--outline);
+  overflow:hidden;
+  padding-block:14px;
+  background:rgba(255,255,255,.012);
 }
-.hero-art img{border-radius:var(--r-lg);width:100%;height:auto}
-.hero-art figcaption{
-  display:flex;align-items:center;justify-content:space-between;gap:var(--s-200);
-  padding:var(--s-100) var(--s-75) var(--s-25);
+.ticker-track{display:flex;width:max-content;animation:slide 46s linear infinite}
+.ticker-track span{
+  display:inline-flex;align-items:center;
+  padding-inline:26px;
+  font-size:13px;letter-spacing:.14em;text-transform:uppercase;
+  color:rgba(161,161,163,.85);white-space:nowrap;
 }
-
-/* ── tagline reveal ─────────────────────────────────── */
-.tagline{padding-block:var(--s-900);border-top:1px solid var(--line)}
-.tagline p{
-  max-width:900px;
-  font-size:48px;line-height:1;font-weight:600;letter-spacing:-.04em;
-  text-wrap:balance;
-}
-.tagline .w{
-  display:inline-block;
-  color:rgba(245,245,247,.28);
-  transition:color .7s var(--ease);
-}
-.tagline .w.lit{color:var(--text)}
+.ticker-track span::after{content:"";width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.22);margin-left:26px}
+@keyframes slide{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 
 /* ── section head ───────────────────────────────────── */
 .head{
-  display:grid;grid-template-columns:.42fr 1fr;gap:var(--s-500);
-  align-items:start;margin-bottom:var(--s-700);
+  display:grid;grid-template-columns:.42fr 1fr;gap:32px;align-items:start;
+  margin-bottom:56px;
 }
 .kicker{
-  display:inline-flex;align-items:center;gap:var(--s-75);
-  font-size:12px;line-height:16px;font-weight:500;
-  letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);
+  display:inline-flex;align-items:center;gap:10px;
+  font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);
 }
-.kicker::before{content:"";width:16px;height:1px;background:rgba(255,255,255,.3)}
-.head p{margin-top:var(--s-200);max-width:52ch}
+.kicker::before{content:"";width:18px;height:1px;background:rgba(255,255,255,.28)}
+.head p{margin-top:18px;max-width:52ch;color:var(--variant)}
 
 /* ── cards ──────────────────────────────────────────── */
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s-100)}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 .card{
-  display:flex;flex-direction:column;
-  padding:var(--s-400) var(--s-400) var(--s-400);
-  border:1px solid var(--line);
-  border-radius:var(--r-xl);
-  background:var(--surface-1);
-  transition:background .3s var(--ease),border-color .3s var(--ease),transform .5s var(--ease);
+  position:relative;
+  padding:32px 34px 36px;
+  border-radius:var(--radius);
+  border:1px solid var(--outline);
+  background:rgba(255,255,255,.012);
+  box-shadow:var(--card-shadow);
+  transition:background .3s ease,border-color .3s ease,transform .35s var(--ease);
 }
-.card:hover{background:var(--surface-2);border-color:var(--line-strong);transform:translateY(-2px)}
-.card .num{font-size:12px;line-height:16px;color:var(--text-muted);letter-spacing:.08em}
-.card h3{margin-top:var(--s-500)}
-.card p{margin-top:var(--s-100);max-width:34ch}
-.card .icon{
-  width:40px;height:40px;border-radius:var(--r-md);
-  border:1px solid var(--line);
-  display:grid;place-items:center;color:var(--text-variant);
-  background:var(--surface-2);
+.card:hover{background:rgba(255,255,255,.03);border-color:var(--outline-2);transform:translateY(-2px)}
+.card .num{font-size:13px;color:var(--muted);letter-spacing:.06em}
+.card h3{
+  margin-top:26px;
+  font-size:clamp(21px,2vw,26px);font-weight:600;line-height:1.08;letter-spacing:-.035em;
 }
+.card p{margin-top:12px;font-size:14px;line-height:1.5;color:var(--muted);max-width:34ch}
 
 /* ── screens ────────────────────────────────────────── */
-.shots{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s-100)}
+.shots{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 .shot{
-  margin:0;
-  border:1px solid var(--line);
-  border-radius:var(--r-xl);
-  background:var(--surface-1);
-  overflow:hidden;
-  transition:border-color .3s var(--ease),transform .5s var(--ease);
+  position:relative;margin:0;padding:0;
+  border-radius:var(--radius);overflow:hidden;
+  border:1px solid var(--outline);
+  background:rgba(255,255,255,.012);
+  box-shadow:var(--card-shadow);
+  transition:border-color .3s ease,transform .35s var(--ease);
 }
-.shot:hover{border-color:var(--line-strong);transform:translateY(-2px)}
-.shot img{width:100%;height:auto;aspect-ratio:3/4;object-fit:cover}
+.shot:hover{border-color:var(--outline-2);transform:translateY(-2px)}
+.shot img{display:block;width:100%;height:auto;aspect-ratio:3/4;object-fit:cover}
 .shot figcaption{
-  display:flex;align-items:baseline;justify-content:space-between;gap:var(--s-100);
-  padding:var(--s-200) var(--s-300) var(--s-300);
+  display:flex;align-items:baseline;justify-content:space-between;gap:12px;
+  padding:16px 20px 18px;
+  border-top:1px solid var(--outline);
+  font-size:13px;color:var(--muted);
 }
-.shot figcaption b{font-size:14px;line-height:20px;font-weight:600;color:var(--text)}
+.shot figcaption b{font-weight:600;color:var(--on);font-size:14px;letter-spacing:-.01em}
 
-/* ── how it works ───────────────────────────────────── */
-.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s-100);counter-reset:step}
-.step{
-  padding:var(--s-400);
-  border:1px solid var(--line);border-radius:var(--r-xl);
-  background:var(--surface-1);
-}
-.step .n{
-  display:inline-grid;place-items:center;
-  width:28px;height:28px;border-radius:var(--r-full);
-  border:1px solid var(--line-strong);
-  font-size:12px;line-height:16px;font-weight:600;color:var(--text);
-}
-.step h3{margin-top:var(--s-300)}
-.step p{margin-top:var(--s-100);max-width:36ch}
-
-/* ── player split ───────────────────────────────────── */
-.split{display:grid;grid-template-columns:1fr 380px;gap:var(--s-800);align-items:center}
-.points{list-style:none;margin-top:var(--s-600);border-top:1px solid var(--line)}
+/* ── player ─────────────────────────────────────────── */
+.split{display:grid;grid-template-columns:1fr 400px;gap:clamp(32px,6vw,81px);align-items:center}
+.points{list-style:none;margin-top:44px;display:grid;gap:0}
 .points li{
-  display:grid;grid-template-columns:28px 1fr;gap:var(--s-200);
-  padding-block:var(--s-300);
-  border-bottom:1px solid var(--line);
+  display:grid;grid-template-columns:34px 1fr;gap:18px;
+  padding-block:24px;
+  border-top:1px solid var(--outline);
   align-items:start;
 }
-.points .n{font-size:12px;line-height:16px;color:var(--text-muted);padding-top:var(--s-50)}
-.points h4{font-size:18px;line-height:28px;font-weight:500;letter-spacing:-.02em}
-.points p{margin-top:var(--s-50);max-width:44ch}
+.points li:last-child{border-bottom:1px solid var(--outline)}
+.points .n{font-size:13px;color:var(--muted);padding-top:3px}
+.points h4{font-size:18px;font-weight:600;letter-spacing:-.02em}
+.points p{margin-top:6px;font-size:14px;line-height:1.5;color:var(--muted);max-width:44ch}
 
 .player{
-  border:1px solid var(--line);
-  border-radius:var(--r-xl);
-  background:var(--surface-1);
-  padding:var(--s-300);
+  border-radius:var(--radius);
+  border:1px solid var(--outline);
+  background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.012) 38%,rgba(255,255,255,.006));
+  box-shadow:var(--card-shadow);
+  padding:24px;
 }
-.player-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--s-300)}
-.player-top .caption-5{letter-spacing:.08em;text-transform:uppercase}
+.player-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.player-top .caption{letter-spacing:.06em;text-transform:uppercase;font-size:11px}
 .chip{
-  font-size:12px;line-height:16px;font-weight:500;color:var(--text-variant);
-  border:1px solid var(--line);border-radius:var(--r-full);
-  padding:var(--s-25) var(--s-75);
+  font-size:11px;letter-spacing:.04em;color:var(--variant);
+  border:1px solid var(--outline);border-radius:9999px;padding:4px 9px;
 }
 .art{
-  position:relative;aspect-ratio:1;border-radius:var(--r-lg);overflow:hidden;
-  border:1px solid var(--line-strong);
-  background:var(--surface-3);
+  position:relative;aspect-ratio:1;border-radius:22px;overflow:hidden;
+  border:1px solid rgba(255,255,255,.10);
+  background:
+    radial-gradient(circle at 34% 28%,rgba(255,255,255,.16),transparent 46%),
+    radial-gradient(circle at 72% 76%,rgba(255,255,255,.07),transparent 52%),
+    linear-gradient(160deg,#18181b,#0b0b0c 62%);
 }
 .art::before,.art::after{
   content:"";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
-  border-radius:50%;border:1px solid rgba(255,255,255,.14);
+  border-radius:50%;border:1px solid rgba(255,255,255,.10);
 }
-.art::before{width:64%;height:64%}
-.art::after{width:40%;height:40%}
+.art::before{width:62%;height:62%}
+.art::after{width:38%;height:38%;border-color:rgba(255,255,255,.16)}
 .art .core{
   position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
-  width:22%;height:22%;border-radius:50%;
-  background:var(--text);opacity:.92;
+  width:26%;height:26%;border-radius:50%;
+  background:radial-gradient(circle at 38% 32%,rgba(255,255,255,.9),rgba(255,255,255,.10) 46%,rgba(255,255,255,0) 72%);
+  filter:blur(.2px);
 }
-.track{display:flex;align-items:flex-end;justify-content:space-between;gap:var(--s-200);margin-top:var(--s-300)}
-.track .t{font-size:16px;line-height:24px;font-weight:600;letter-spacing:-.01em}
-.track .a{font-size:14px;line-height:20px;color:var(--text-muted);margin-top:var(--s-25)}
-.bar{position:relative;height:2px;border-radius:var(--r-full);background:rgba(255,255,255,.14);margin-top:var(--s-300)}
-.bar i{position:absolute;left:0;top:0;height:2px;width:44%;border-radius:var(--r-full);background:var(--text)}
+.track{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;margin-top:22px}
+.track .t{font-size:17px;font-weight:600;letter-spacing:-.02em}
+.track .a{font-size:14px;color:var(--muted);margin-top:2px}
+.track .time{font-size:12px;color:var(--muted);white-space:nowrap;padding-bottom:2px}
+.bar{position:relative;height:2px;border-radius:2px;background:rgba(255,255,255,.12);margin-top:18px}
+.bar i{position:absolute;left:0;top:0;height:2px;width:44%;border-radius:2px;background:var(--on)}
 .bar i::after{
   content:"";position:absolute;right:-4px;top:50%;transform:translateY(-50%);
-  width:8px;height:8px;border-radius:50%;background:var(--text);
+  width:8px;height:8px;border-radius:50%;background:var(--on);
 }
-.controls{display:flex;align-items:center;justify-content:space-between;margin-top:var(--s-300)}
+.controls{display:flex;align-items:center;justify-content:space-between;margin-top:22px}
 .ic{
-  width:40px;height:40px;border-radius:var(--r-full);
-  display:grid;place-items:center;color:var(--text-variant);
-  transition:background .2s var(--ease),color .2s var(--ease);
+  width:38px;height:38px;border-radius:50%;
+  display:grid;place-items:center;
+  color:var(--variant);
+  transition:background .25s ease,color .25s ease;
 }
-.ic.play{width:52px;height:52px;background:var(--text);color:#000}
+.ic:hover{background:var(--wash-2);color:var(--strong)}
+.ic.play{
+  width:52px;height:52px;background:var(--on);color:#000;
+  box-shadow:0 10px 26px -10px rgba(255,255,255,.45);
+}
+.ic.play:hover{background:var(--strong)}
 .ic svg{display:block}
 
-/* ── FAQ ────────────────────────────────────────────── */
-.faq{max-width:820px}
-.qa{border-top:1px solid var(--line)}
-.qa:last-child{border-bottom:1px solid var(--line)}
-.qa summary{
-  list-style:none;cursor:pointer;
-  display:flex;align-items:center;justify-content:space-between;gap:var(--s-300);
-  padding-block:var(--s-300);
-  font-size:18px;line-height:28px;font-weight:500;letter-spacing:-.02em;
-  transition:color .2s var(--ease);
-}
-.qa summary::-webkit-details-marker{display:none}
-.qa summary:hover{color:var(--text-strong)}
-.qa summary::after{
-  content:"";width:10px;height:10px;flex:none;
-  border-right:1.5px solid var(--text-muted);border-bottom:1.5px solid var(--text-muted);
-  transform:rotate(45deg) translateY(-2px);
-  transition:transform .4s var(--ease);
-}
-.qa[open] summary::after{transform:rotate(225deg) translateY(-2px)}
-.qa p{padding-bottom:var(--s-300);max-width:62ch}
-
-/* ── specs ──────────────────────────────────────────── */
-.specs{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s-100)}
+/* ── spec strip ─────────────────────────────────────── */
+.specs{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 .spec{
-  padding:var(--s-400);
-  border:1px solid var(--line);border-radius:var(--r-xl);
-  background:var(--surface-1);
+  padding:34px 34px 38px;
+  border-radius:var(--radius);
+  border:1px solid var(--outline);
+  background:rgba(255,255,255,.012);
 }
-.spec .v{font-size:36px;line-height:40px;font-weight:600;letter-spacing:-.04em}
-.spec .k{margin-top:var(--s-100)}
+.spec .v{font-size:clamp(30px,4vw,52px);font-weight:600;letter-spacing:-.045em;line-height:1}
+.spec .k{margin-top:14px;font-size:14px;color:var(--muted)}
 
-/* ── CTA ────────────────────────────────────────────── */
-.cta{padding-block:var(--s-900);text-align:center;border-top:1px solid var(--line)}
-.cta-in{display:flex;flex-direction:column;align-items:center;gap:var(--s-300)}
+/* ── cta ────────────────────────────────────────────── */
+.cta{position:relative;text-align:center;padding-block:140px;overflow:hidden}
+.cta::before{
+  content:"";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:min(820px,90vw);height:min(820px,90vw);border-radius:50%;
+  background:radial-gradient(circle,rgba(255,255,255,.05),transparent 62%);
+  pointer-events:none;
+}
+.cta-in{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:26px}
 .cta h2{max-width:16ch}
-.cta p{max-width:48ch}
-.cta .actions{justify-content:center;margin-top:var(--s-100)}
+.cta p{max-width:46ch;color:var(--muted);font-size:17px}
+.cta .btn-primary{height:58px;padding:0 32px;font-size:16px}
 
 /* ── footer ─────────────────────────────────────────── */
-.footer{border-top:1px solid var(--line);padding-block:var(--s-400) var(--s-500)}
-.footer-in{display:flex;align-items:center;justify-content:space-between;gap:var(--s-300);flex-wrap:wrap}
-.footer-links{display:flex;gap:var(--s-25);flex-wrap:wrap}
+.footer{border-top:1px solid var(--outline);padding-block:34px 40px}
+.footer-in{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.footer .caption{color:rgba(161,161,163,.8)}
+.footer-links{display:flex;gap:4px}
 .footer-links a{
-  font-size:14px;line-height:20px;color:var(--text-muted);
-  padding:var(--s-75) var(--s-100);border-radius:var(--r-full);
-  transition:color .2s var(--ease),background .2s var(--ease);
+  font-size:13px;color:var(--muted);padding:8px 12px;border-radius:9999px;
+  transition:color .25s ease,background .25s ease;
 }
-.footer-links a:hover{color:var(--text-strong);background:rgba(255,255,255,.05)}
+.footer-links a:hover{color:var(--strong);background:var(--wash)}
 
 /* ── reveal ─────────────────────────────────────────── */
-.reveal{opacity:0;transform:translateY(var(--s-400));transition:opacity .7s var(--ease),transform .7s var(--ease)}
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .6s var(--ease),transform .6s var(--ease);transition-delay:calc(var(--i,0)*55ms)}
 .reveal.in{opacity:1;transform:none}
 
 /* ── responsive ─────────────────────────────────────── */
 @media (max-width:1100px){
-  .split{grid-template-columns:1fr 340px;gap:var(--s-600)}
-  .grid,.steps{grid-template-columns:repeat(2,1fr)}
-  .hero-grid{gap:var(--s-600)}
+  .split{grid-template-columns:1fr 340px;gap:40px}
+  .grid{grid-template-columns:repeat(2,1fr)}
 }
 @media (max-width:900px){
-  :root{--page:var(--s-300)}
-  .heading-1{font-size:36px;line-height:40px}
-  .heading-2{font-size:30px;line-height:36px}
-  .heading-3{font-size:24px;line-height:32px}
-  .tagline p{font-size:30px;line-height:36px}
+  :root{--page:28px;--section:64px}
+  .hero{min-height:auto;padding-top:72px}
+  .hero-grid{grid-template-columns:1fr;gap:36px;align-items:start}
+  .hero-sub{margin-top:14px}
+  .head{grid-template-columns:1fr;gap:16px;margin-bottom:36px}
+  .split{grid-template-columns:1fr;gap:56px}
+  .player{max-width:400px}
   .nav-links{display:none}
-  .nav{padding:var(--s-50) var(--s-50) var(--s-50) var(--s-200)}
-  .nav .btn{display:none}
-  .menu-btn{display:grid}
-  .hero{padding-top:calc(var(--s-900) + var(--s-600));padding-bottom:var(--s-700)}
-  .hero-grid{grid-template-columns:1fr;gap:var(--s-600)}
-  .hero-art{max-width:420px}
-  .head{grid-template-columns:1fr;gap:var(--s-200);margin-bottom:var(--s-500)}
-  .split{grid-template-columns:1fr;gap:var(--s-600)}
-  .player{max-width:380px}
-  .section{padding-block:var(--s-700)}
 }
 @media (max-width:640px){
-  :root{--page:var(--s-200)}
-  .grid,.shots,.steps,.specs{grid-template-columns:1fr}
-  .card,.step,.spec{padding:var(--s-300)}
-  .hero-meta{margin-top:var(--s-400)}
-  .rings{display:none}
-  .cta{padding-block:var(--s-700)}
+  :root{--page:20px;--section:56px}
+  .grid{grid-template-columns:1fr}
+  .shots{grid-template-columns:1fr}
+  .specs{grid-template-columns:1fr}
+  .card{padding:26px 24px 28px}
+  .hero-meta{margin-top:36px}
+  .cta{padding-block:96px}
+  .rings span:nth-child(1),.rings span:nth-child(2){display:none}
+  .btn-secondary{height:52px;padding:15px 24px;font-size:15px}
   .footer-in{flex-direction:column;align-items:flex-start}
 }
 
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
+  .ticker-track{animation:none}
+  .eyebrow i{animation:none}
   .reveal{opacity:1;transform:none;transition:none}
-  .tagline .w{transition:none;color:var(--text)}
-  .btn,.card,.shot,.ic,.nav-link,.panel,.panel a{transition:none}
-  .panel a{transform:none;opacity:1}
+  .btn,.card,.ic,.nav-link{transition:none}
 }
 </style>
 </head>
 <body>
 
-<a class="skip" href="#main">Skip to content</a>
-
-<header class="nav" id="top">
-  <a class="brand" href="#top" aria-label="Coral, home">
-    <span class="brand-mark" aria-hidden="true"></span>
-    <span class="brand-name">Coral</span>
-  </a>
-  <nav class="nav-links" aria-label="Sections">
-    <a class="nav-link" href="#screens">Screens</a>
-    <a class="nav-link" href="#features">Features</a>
-    <a class="nav-link" href="#how">How it works</a>
-    <a class="nav-link" href="#faq">FAQ</a>
-  </nav>
-  <a class="btn btn-primary button-sm" href="https://t.me/rajat_xo" target="_blank" rel="noopener">Get notified</a>
-  <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="panel" aria-label="Open menu">
-    <span class="bars" aria-hidden="true"><i></i><i></i></span>
-  </button>
+<header class="nav">
+  <div class="wrap nav-in">
+    <a class="brand" href="#top" aria-label="Coral — home">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span class="brand-name">Coral</span>
+    </a>
+    <nav class="nav-links" aria-label="Sections">
+      <a class="nav-link" href="#screens">Screens</a>
+      <a class="nav-link" href="#inside">Inside</a>
+      <a class="nav-link" href="#player">The player</a>
+      <a class="nav-link" href="#specs">Details</a>
+    </nav>
+    <a class="btn btn-primary" href="https://t.me/rajat_xo" target="_blank" rel="noopener">
+      Get notified
+    </a>
+  </div>
 </header>
 
-<div class="panel" id="panel" role="dialog" aria-modal="true" aria-label="Menu">
-  <a href="#screens">Screens</a>
-  <a href="#features">Features</a>
-  <a href="#how">How it works</a>
-  <a href="#faq">FAQ</a>
-  <a href="https://t.me/rajat_xo" target="_blank" rel="noopener">Get notified</a>
-</div>
-
-<main id="main">
+<main id="top">
 
   <section class="hero">
     <div class="rings" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
     <div class="wrap">
       <div class="hero-grid">
-        <div>
-          <span class="eyebrow"><i aria-hidden="true"></i> Coming soon · Android 10 and newer</span>
-          <h1 class="heading-1">Your own music, without the noise.</h1>
-          <p class="hero-sub">
-            Coral plays the files already on your phone. A playlist wheel instead of a
-            list, lyrics that keep time, and 8D audio you can tune. Nothing to sign into.
+        <div class="hero-left">
+          <span class="eyebrow"><i aria-hidden="true"></i> Coming soon · Android</span>
+          <h1 class="display">Coral</h1>
+          <p class="hero-sub">Find your sound.</p>
+        </div>
+        <div class="hero-right">
+          <p class="lead">
+            A music player that treats your library like it matters. Local files,
+            gapless playback, and an interface that gets out of the way.
           </p>
           <div class="actions">
-            <a class="btn btn-primary button-md" href="https://t.me/rajat_xo" target="_blank" rel="noopener">
-              Get the build <span class="btn-arrow" aria-hidden="true">&rarr;</span>
+            <a class="btn btn-primary" href="https://t.me/rajat_xo" target="_blank" rel="noopener">
+              Get notified
             </a>
-            <a class="btn btn-ghost button-md" href="#screens">See the screens</a>
+            <a class="btn btn-secondary" href="#inside">
+              See what&rsquo;s inside <span class="btn-arrow" aria-hidden="true">&darr;</span>
+            </a>
           </div>
-          <p class="hero-meta">
-            <span>No account</span>
-            <span>Nothing uploaded</span>
-            <span>One APK</span>
-          </p>
         </div>
-
-        <figure class="hero-art reveal">
-          <img src="assets/images/screens/effect.webp"
-               alt="Coral's 8D screen: a glowing sphere inside a ring of space names, above a head wearing headphones"
-               width="720" height="960" fetchpriority="high" decoding="async">
-          <figcaption>
-            <span class="caption-2">The 8D screen</span>
-            <span class="caption-5">Spatial audio</span>
-          </figcaption>
-        </figure>
+      </div>
+      <div class="hero-meta">
+        <span>Offline first</span>
+        <span>No accounts</span>
+        <span>No tracking</span>
+        <span>One small APK</span>
       </div>
     </div>
   </section>
 
-  <section class="tagline" aria-label="What Coral is for">
-    <div class="wrap">
-      <p id="tagline">No feed. No algorithm. No account. Just your library, played properly.</p>
+  <div class="ticker" aria-hidden="true">
+    <div class="ticker-track">
+      <span>Local files</span><span>Gapless playback</span><span>Word-level lyrics</span>
+      <span>8D audio</span><span>Adaptive colour</span><span>No accounts</span>
+      <span>Local files</span><span>Gapless playback</span><span>Word-level lyrics</span>
+      <span>8D audio</span><span>Adaptive colour</span><span>No accounts</span>
     </div>
-  </section>
+  </div>
 
   <section class="section" id="screens">
     <div class="wrap">
       <div class="head">
-        <div><span class="kicker">01 · Screens</span></div>
+        <div><span class="kicker">01 &mdash; Screens</span></div>
         <div class="reveal">
-          <h2 class="heading-2">Made to be looked at.</h2>
-          <p class="body-3">Every screen is one gesture deep. What you came for sits in the middle, and nothing asks for attention it has not earned.</p>
+          <h2 class="h-lg">Made to be<br>looked at.</h2>
+          <p>Every screen is one gesture deep: what you came for, in the middle, and
+             nothing asking for attention it hasn&rsquo;t earned.</p>
         </div>
       </div>
 
       <div class="shots">
-        <figure class="shot reveal">
+        <figure class="shot reveal" style="--i:0">
           <img src="assets/images/screens/library.webp"
-               alt="Coral library screen: playlists arranged along an arc around a sphere"
+               alt="Coral library screen: playlists arranged in an arc around a sphere of artists"
                width="720" height="960" loading="lazy" decoding="async">
-          <figcaption><b>The library</b><span class="caption-5">Playlists on a wheel</span></figcaption>
+          <figcaption><b>The library</b><span>Playlists in orbit</span></figcaption>
         </figure>
-        <figure class="shot reveal">
+        <figure class="shot reveal" style="--i:1">
           <img src="assets/images/screens/effect.webp"
-               alt="Coral 8D audio screen: a warm sphere inside rings of reverb names, above a head wearing headphones"
+               alt="Coral 8D audio screen: a warm dot sphere inside rings of reverb names, above a head wearing headphones"
                width="720" height="960" loading="lazy" decoding="async">
-          <figcaption><b>8D audio</b><span class="caption-5">The spatial sphere</span></figcaption>
+          <figcaption><b>8D audio</b><span>The spatial sphere</span></figcaption>
         </figure>
-        <figure class="shot reveal">
+        <figure class="shot reveal" style="--i:2">
           <img src="assets/images/screens/head.webp"
-               alt="Close view of the Coral listener: a glossy head wearing headphones under a small glowing orb"
+               alt="Close-up of the Coral listener: a glossy head wearing headphones under a glowing orb"
                width="720" height="960" loading="lazy" decoding="async">
-          <figcaption><b>The listener</b><span class="caption-5">Detail, up close</span></figcaption>
+          <figcaption><b>The listener</b><span>Detail, up close</span></figcaption>
         </figure>
       </div>
     </div>
   </section>
 
-  <section class="section rule" id="features">
+  <section class="section" id="inside">
     <div class="wrap">
       <div class="head">
-        <div><span class="kicker">02 · Features</span></div>
+        <div><span class="kicker">02 &mdash; Inside</span></div>
         <div class="reveal">
-          <h2 class="heading-2">Quietly good where it counts.</h2>
-          <p class="body-3">Each of these exists because playing an album on a phone is still, somehow, worse than it should be.</p>
+          <h2 class="h-lg">Quietly excellent<br>where it counts.</h2>
+          <p>Nothing here is a feature for the back of a box. Each one exists because
+             listening to an album on a phone is still, somehow, worse than it should be.</p>
         </div>
       </div>
 
       <div class="grid">
-        <article class="card reveal">
-          <span class="icon" aria-hidden="true">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
-              <path d="M3 17a9 9 0 0 1 18 0"/><circle cx="12" cy="17" r="2.2"/>
-            </svg>
-          </span>
-          <h3 class="heading-6">A wheel, not a list</h3>
-          <p class="body-6">Playlists sit on a semicircle you spin with a thumb. Two wheel styles, and a search that rotates to the match instead of jumping to it.</p>
+        <article class="card reveal" style="--i:0">
+          <span class="num">01</span>
+          <h3>Your library, untouched</h3>
+          <p>Read straight from the device. Nothing uploaded, nothing indexed in
+             somebody else&rsquo;s cloud, nothing to sign into.</p>
         </article>
-
-        <article class="card reveal">
-          <span class="icon" aria-hidden="true">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
-              <path d="M4 7h16M4 12h10M4 17h13"/>
-            </svg>
-          </span>
-          <h3 class="heading-6">Lyrics that keep time</h3>
-          <p class="body-6">Word level timing from open lyric databases, lined up per singer, with breaks that breathe instead of sitting still.</p>
+        <article class="card reveal" style="--i:1">
+          <span class="num">02</span>
+          <h3>Gapless, then crossfade</h3>
+          <p>Albums play the way they were recorded. When you want it, tracks melt
+             into each other instead.</p>
         </article>
-
-        <article class="card reveal">
-          <span class="icon" aria-hidden="true">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
-              <circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/>
-            </svg>
-          </span>
-          <h3 class="heading-6">8D, with a dial</h3>
-          <p class="body-6">Orbit speed and spatial ambience are yours to set. The mix circles your head as fast or as slowly as you like, and it turns off when you do.</p>
+        <article class="card reveal" style="--i:2">
+          <span class="num">03</span>
+          <h3>Lyrics that keep time</h3>
+          <p>Word-level timing, per-singer alignment, and instrumental breaks that
+             breathe instead of sitting still.</p>
         </article>
-
-        <article class="card reveal">
-          <span class="icon" aria-hidden="true">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
-              <rect x="4" y="4" width="16" height="16" rx="4"/><circle cx="12" cy="12" r="3.2"/>
-            </svg>
-          </span>
-          <h3 class="heading-6">Colour from the cover</h3>
-          <p class="body-6">Artwork tints the interface, then fades back to black so the music stays the bright thing on the screen.</p>
+        <article class="card reveal" style="--i:3">
+          <span class="num">04</span>
+          <h3>Colour from the cover</h3>
+          <p>Artwork sets the room. The interface tints itself, then fades back to
+             black so the music stays the bright thing.</p>
         </article>
-
-        <article class="card reveal">
-          <span class="icon" aria-hidden="true">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
-              <circle cx="12" cy="8" r="3.4"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/>
-            </svg>
-          </span>
-          <h3 class="heading-6">Artist pages that know something</h3>
-          <p class="body-6">Open an artist and Coral pulls a short biography and a portrait from MusicBrainz and Wikipedia, so the page is not just a name.</p>
+        <article class="card reveal" style="--i:4">
+          <span class="num">05</span>
+          <h3>Eight dimensions, on purpose</h3>
+          <p>A slow orbit of the mix around you. Tuned by ear, adjustable to taste,
+             never a gimmick you can&rsquo;t turn off.</p>
         </article>
-
-        <article class="card reveal">
-          <span class="icon" aria-hidden="true">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
-              <path d="M7 11V7a5 5 0 0 1 10 0v4"/><rect x="4.5" y="11" width="15" height="9" rx="3"/>
-            </svg>
-          </span>
-          <h3 class="heading-6">Nothing leaves the phone</h3>
-          <p class="body-6">Your library is read locally and stays there. No sign in, no sync, no copy in somebody else's cloud.</p>
+        <article class="card reveal" style="--i:5">
+          <span class="num">06</span>
+          <h3>Fast, or it doesn&rsquo;t count</h3>
+          <p>Cold start to first track in under a second. Animation that runs on the
+             frame, not on a timer.</p>
         </article>
-      </div>
-    </div>
-  </section>
-
-  <section class="section rule" id="how">
-    <div class="wrap">
-      <div class="head">
-        <div><span class="kicker">03 · How it works</span></div>
-        <div class="reveal">
-          <h2 class="heading-2">Three steps, then music.</h2>
-          <p class="body-3">No wizard, no import screen, no library to rebuild by hand.</p>
-        </div>
-      </div>
-
-      <div class="steps">
-        <div class="step reveal">
-          <span class="n" aria-hidden="true">1</span>
-          <h3 class="heading-6">Point it at your phone</h3>
-          <p class="body-6">Coral reads the audio Android already knows about. Nothing is copied, converted or uploaded.</p>
-        </div>
-        <div class="step reveal">
-          <span class="n" aria-hidden="true">2</span>
-          <h3 class="heading-6">Build a wheel</h3>
-          <p class="body-6">Make a playlist with a name, a cover and the songs you want. It joins the wheel, ready to spin.</p>
-        </div>
-        <div class="step reveal">
-          <span class="n" aria-hidden="true">3</span>
-          <h3 class="heading-6">Spin, tap, play</h3>
-          <p class="body-6">Drag the wheel to browse, tap the centre to open. The mini player keeps the controls one thumb away.</p>
-        </div>
       </div>
     </div>
   </section>
@@ -711,28 +570,31 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
   <section class="section rule" id="player">
     <div class="wrap split">
       <div>
-        <span class="kicker">04 · The player</span>
-        <h2 class="heading-2" style="margin-top:var(--s-200)">One screen you stay on.</h2>
+        <span class="kicker">03 &mdash; The player</span>
+        <h2 class="h-lg" style="margin-top:18px">One screen<br>you stay on.</h2>
         <ul class="points">
           <li>
             <span class="n">01</span>
             <div>
               <h4>Built around the album</h4>
-              <p class="body-6">Cover, colour and the next track, arranged so you never have to think about where anything is.</p>
+              <p>Cover, colour and the next track, arranged so you never have to
+                 think about where anything is.</p>
             </div>
           </li>
           <li>
             <span class="n">02</span>
             <div>
               <h4>Controls that stay put</h4>
-              <p class="body-6">Play sits in the middle. Everything else moves around it, never the other way round.</p>
+              <p>Play stays centred. Everything else moves around it, not the other
+                 way round.</p>
             </div>
           </li>
           <li>
             <span class="n">03</span>
             <div>
               <h4>Nothing between you and the song</h4>
-              <p class="body-6">No feed, no recommendations, no upsell. Open it, press play, put the phone down.</p>
+              <p>No feed, no recommendations, no upsell. Open it, press play,
+                 put the phone down.</p>
             </div>
           </li>
         </ul>
@@ -740,8 +602,8 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 
       <div class="player reveal" aria-hidden="true">
         <div class="player-top">
-          <span class="caption-5">Now playing</span>
-          <span class="chip">On device</span>
+          <span class="caption">Now playing</span>
+          <span class="chip">Lossless</span>
         </div>
         <div class="art"><span class="core"></span></div>
         <div class="track">
@@ -749,7 +611,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
             <p class="t">Nocturne in C</p>
             <p class="a">Aurelia</p>
           </div>
-          <span class="caption-5">2:14 / 4:48</span>
+          <span class="time">2:14 / 4:48</span>
         </div>
         <div class="bar"><i></i></div>
         <div class="controls">
@@ -778,82 +640,28 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
     </div>
   </section>
 
-  <section class="section rule" id="faq">
+  <section class="section" id="specs">
     <div class="wrap">
       <div class="head">
-        <div><span class="kicker">05 · Questions</span></div>
+        <div><span class="kicker">04 &mdash; Details</span></div>
         <div class="reveal">
-          <h2 class="heading-2">The short answers.</h2>
-          <p class="body-3">Anything else, ask on Telegram and you will get a reply from the person who built it.</p>
-        </div>
-      </div>
-
-      <div class="faq">
-        <details class="qa reveal">
-          <summary>What is Coral?</summary>
-          <p class="body-6">A music player for Android that plays the audio files already on your device. It is built around a playlist wheel instead of a list, with timed lyrics, artist pages and spatial 8D audio.</p>
-        </details>
-        <details class="qa reveal">
-          <summary>Is it on the Play Store yet?</summary>
-          <p class="body-6">Not yet. Coral is in final testing. The build goes to the Telegram channel first, then to the store.</p>
-        </details>
-        <details class="qa reveal">
-          <summary>Do I need an account?</summary>
-          <p class="body-6">No. There is no sign in, no profile and no email required. Open the app and your library is there.</p>
-        </details>
-        <details class="qa reveal">
-          <summary>Does it upload my music?</summary>
-          <p class="body-6">No. Your library is read through Android's media library and never leaves the device. The only network calls are for lyrics, artist biographies and album details, and they ask for a song or artist name, not your files.</p>
-        </details>
-        <details class="qa reveal">
-          <summary>Which Android versions work?</summary>
-          <p class="body-6">Android 10 and newer. The interface, the blur effects and the 8D processor are built for that range.</p>
-        </details>
-        <details class="qa reveal">
-          <summary>What file types can it play?</summary>
-          <p class="body-6">Whatever Android can decode, which in practice means MP3, AAC and M4A, FLAC, OGG and WAV.</p>
-        </details>
-        <details class="qa reveal">
-          <summary>What is the wheel?</summary>
-          <p class="body-6">Your playlists arranged on a semicircle along the left edge. You drag it like a dial and the names rotate past, with the selected playlist large in the centre. There is a simpler style and an advanced one, depending on how much motion you want.</p>
-        </details>
-        <details class="qa reveal">
-          <summary>Does 8D audio change the file?</summary>
-          <p class="body-6">No. It is processed live as the track plays, so the original file is untouched. You can set how fast the mix orbits and how wide the space feels, or turn it off entirely.</p>
-        </details>
-        <details class="qa reveal">
-          <summary>Does it work offline?</summary>
-          <p class="body-6">Playback does, fully. Lyrics, artist pages and album details need a connection because they come from public databases.</p>
-        </details>
-        <details class="qa reveal">
-          <summary>What does it cost?</summary>
-          <p class="body-6">Nothing is charged during testing. If that changes before release, it will be stated here and in the Telegram channel first.</p>
-        </details>
-      </div>
-    </div>
-  </section>
-
-  <section class="section rule" id="details">
-    <div class="wrap">
-      <div class="head">
-        <div><span class="kicker">06 · Details</span></div>
-        <div class="reveal">
-          <h2 class="heading-2">Small app. Short list.</h2>
-          <p class="body-3">No subscription, no tier system, no account to recover. Coral reads what is already on your phone and plays it well.</p>
+          <h2 class="h-lg">Small app.<br>Short list.</h2>
+          <p>No subscription, no tier system, no account to recover. Coral reads what
+             is already on your phone and plays it well.</p>
         </div>
       </div>
       <div class="specs">
-        <div class="spec reveal">
+        <div class="spec reveal" style="--i:0">
           <div class="v">0</div>
-          <div class="k body-6">Accounts. Your library never leaves the device.</div>
+          <div class="k">Accounts. Your library never leaves the device.</div>
         </div>
-        <div class="spec reveal">
+        <div class="spec reveal" style="--i:1">
           <div class="v">10+</div>
-          <div class="k body-6">Android versions supported, from Android 10 up.</div>
+          <div class="k">Android versions supported, down to Android 10.</div>
         </div>
-        <div class="spec reveal">
+        <div class="spec reveal" style="--i:2">
           <div class="v">1</div>
-          <div class="k body-6">APK. No companion app, no plugin, no setup wizard.</div>
+          <div class="k">APK. No companion app, no plugin, no setup wizard.</div>
         </div>
       </div>
     </div>
@@ -862,13 +670,12 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
   <section class="cta">
     <div class="wrap cta-in">
       <span class="eyebrow"><i aria-hidden="true"></i> In final testing</span>
-      <h2 class="heading-2">Coming soon.</h2>
-      <p class="body-3">Leave a message on Telegram and you get the build the day it lands, plus a say in what gets fixed next.</p>
-      <div class="actions">
-        <a class="btn btn-primary button-md" href="https://t.me/rajat_xo" target="_blank" rel="noopener">
-          Get the build <span class="btn-arrow" aria-hidden="true">&rarr;</span>
-        </a>
-      </div>
+      <h2 class="h-md">Coming soon.</h2>
+      <p>Coral is in its last stretch. Leave a message on Telegram and you&rsquo;ll get
+         the build the day it lands.</p>
+      <a class="btn btn-primary" href="https://t.me/rajat_xo" target="_blank" rel="noopener">
+        Get notified <span class="btn-arrow" aria-hidden="true">&rarr;</span>
+      </a>
     </div>
   </section>
 
@@ -876,109 +683,31 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 
 <footer class="footer">
   <div class="wrap footer-in">
-    <p class="caption-5">&copy; 2026 Coral. Designed and built by Rajat.</p>
-    <nav class="footer-links" aria-label="Elsewhere and legal">
+    <p class="caption">&copy; 2026 Coral &middot; Designed and built by Rajat</p>
+    <nav class="footer-links" aria-label="Elsewhere">
       <a href="https://t.me/rajat_xo" target="_blank" rel="noopener">Telegram</a>
       <a href="https://github.com/rajatxo" target="_blank" rel="noopener">GitHub</a>
-      <a href="privacy.html">Privacy</a>
-      <a href="terms.html">Terms</a>
     </nav>
   </div>
 </footer>
 
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {"@type":"Question","name":"What is Coral?","acceptedAnswer":{"@type":"Answer","text":"A music player for Android that plays the audio files already on your device, built around a playlist wheel with timed lyrics, artist pages and spatial 8D audio."}},
-    {"@type":"Question","name":"Do I need an account?","acceptedAnswer":{"@type":"Answer","text":"No. There is no sign in, no profile and no email required."}},
-    {"@type":"Question","name":"Does it upload my music?","acceptedAnswer":{"@type":"Answer","text":"No. Your library is read through Android's media library and never leaves the device."}},
-    {"@type":"Question","name":"Which Android versions work?","acceptedAnswer":{"@type":"Answer","text":"Android 10 and newer."}},
-    {"@type":"Question","name":"Does it work offline?","acceptedAnswer":{"@type":"Answer","text":"Playback works fully offline. Lyrics, artist pages and album details need a connection because they come from public databases."}}
-  ]
-}
-</script>
-
-<!-- Lenis 1.3.27, MIT, darkroom.engineering. Self hosted: assets/vendor/lenis.LICENSE.txt -->
+<!-- Lenis 1.3.27 — MIT, © darkroom.engineering. Self-hosted: assets/vendor/lenis.LICENSE.txt -->
 <script src="assets/vendor/lenis.min.js" defer></script>
 <script>
 (function () {
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  /* scroll reveals */
-  var reveals = document.querySelectorAll('.reveal');
-  if (!reduced && 'IntersectionObserver' in window) {
+  if (!reduced) {
     var obs = new IntersectionObserver(function (entries) {
       entries.forEach(function (e) {
         if (e.isIntersecting) { e.target.classList.add('in'); obs.unobserve(e.target); }
       });
     }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
-    reveals.forEach(function (el) { obs.observe(el); });
+    document.querySelectorAll('.reveal').forEach(function (el) { obs.observe(el); });
   } else {
-    reveals.forEach(function (el) { el.classList.add('in'); });
+    document.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('in'); });
   }
 
-  /* tagline: one word at a time, as each word crosses the trigger line */
-  var tag = document.getElementById('tagline');
-  if (tag) {
-    var words = tag.textContent.trim().split(/\s+/);
-    tag.textContent = '';
-    var spans = words.map(function (w) {
-      var s = document.createElement('span');
-      s.className = 'w';
-      s.textContent = w;
-      tag.appendChild(s);
-      tag.appendChild(document.createTextNode(' '));
-      return s;
-    });
-    if (reduced) {
-      spans.forEach(function (s) { s.classList.add('lit'); });
-    } else if ('IntersectionObserver' in window) {
-      var line = window.innerHeight * 0.82;
-      var lit = new Set();
-      var ticking = false;
-      var run = function () {
-        ticking = false;
-        spans.forEach(function (s, i) {
-          if (lit.has(i)) return;
-          if (s.getBoundingClientRect().top < line) { lit.add(i); s.classList.add('lit'); }
-        });
-      };
-      var onScroll = function () {
-        if (ticking) return;
-        ticking = true;
-        window.requestAnimationFrame(run);
-      };
-      window.addEventListener('scroll', onScroll, { passive: true });
-      window.addEventListener('resize', onScroll);
-      run();
-    } else {
-      spans.forEach(function (s) { s.classList.add('lit'); });
-    }
-  }
-
-  /* mobile menu */
-  var btn = document.getElementById('menuBtn');
-  var panel = document.getElementById('panel');
-  var closePanel = function () {
-    if (!panel.classList.contains('open')) return;
-    panel.classList.remove('open');
-    btn.setAttribute('aria-expanded', 'false');
-    btn.setAttribute('aria-label', 'Open menu');
-    document.body.style.overflow = '';
-  };
-  btn.addEventListener('click', function () {
-    var open = !panel.classList.contains('open');
-    panel.classList.toggle('open', open);
-    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
-    btn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
-    document.body.style.overflow = open ? 'hidden' : '';
-  });
-  panel.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', closePanel); });
-  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closePanel(); });
-
-  /* smooth anchors through Lenis when available */
   window.addEventListener('load', function () {
     if (reduced || typeof Lenis === 'undefined') return;
     var lenis = new Lenis({ autoRaf: true, smoothWheel: true, duration: 1.05 });
@@ -989,7 +718,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
         var target = document.querySelector(id);
         if (!target) return;
         ev.preventDefault();
-        lenis.scrollTo(target, { offset: -96, duration: 1.1 });
+        lenis.scrollTo(target, { offset: -69, duration: 1.1 });
       });
     });
   });
