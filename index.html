@@ -10,6 +10,7 @@
 <meta property="og:title" content="Coral — Find Your Sound">
 <meta property="og:description" content="A premium Android music player. Local files, gapless playback, lyrics that keep time.">
 <meta property="og:type" content="website">
+<meta property="og:image" content="https://coralmusic.vercel.app/assets/images/screens/effect.webp">
 
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23000'/%3E%3Ccircle cx='32' cy='32' r='13' fill='none' stroke='%23F5F5F7' stroke-width='2.5'/%3E%3Ccircle cx='32' cy='32' r='4' fill='%23F5F5F7'/%3E%3C/svg%3E">
 
@@ -248,6 +249,26 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 }
 .card p{margin-top:12px;font-size:14px;line-height:1.5;color:var(--muted);max-width:34ch}
 
+/* ── screens ────────────────────────────────────────── */
+.shots{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.shot{
+  position:relative;margin:0;padding:0;
+  border-radius:var(--radius);overflow:hidden;
+  border:1px solid var(--outline);
+  background:rgba(255,255,255,.012);
+  box-shadow:var(--card-shadow);
+  transition:border-color .3s ease,transform .35s var(--ease);
+}
+.shot:hover{border-color:var(--outline-2);transform:translateY(-2px)}
+.shot img{display:block;width:100%;height:auto;aspect-ratio:3/4;object-fit:cover}
+.shot figcaption{
+  display:flex;align-items:baseline;justify-content:space-between;gap:12px;
+  padding:16px 20px 18px;
+  border-top:1px solid var(--outline);
+  font-size:13px;color:var(--muted);
+}
+.shot figcaption b{font-weight:600;color:var(--on);font-size:14px;letter-spacing:-.01em}
+
 /* ── player ─────────────────────────────────────────── */
 .split{display:grid;grid-template-columns:1fr 400px;gap:clamp(32px,6vw,81px);align-items:center}
 .points{list-style:none;margin-top:44px;display:grid;gap:0}
@@ -377,6 +398,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 @media (max-width:640px){
   :root{--page:20px;--section:56px}
   .grid{grid-template-columns:1fr}
+  .shots{grid-template-columns:1fr}
   .specs{grid-template-columns:1fr}
   .card{padding:26px 24px 28px}
   .hero-meta{margin-top:36px}
@@ -404,6 +426,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
       <span class="brand-name">Coral</span>
     </a>
     <nav class="nav-links" aria-label="Sections">
+      <a class="nav-link" href="#screens">Screens</a>
       <a class="nav-link" href="#inside">Inside</a>
       <a class="nav-link" href="#player">The player</a>
       <a class="nav-link" href="#specs">Details</a>
@@ -458,10 +481,44 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
     </div>
   </div>
 
+  <section class="section" id="screens">
+    <div class="wrap">
+      <div class="head">
+        <div><span class="kicker">01 &mdash; Screens</span></div>
+        <div class="reveal">
+          <h2 class="h-lg">Made to be<br>looked at.</h2>
+          <p>Every screen is one gesture deep: what you came for, in the middle, and
+             nothing asking for attention it hasn&rsquo;t earned.</p>
+        </div>
+      </div>
+
+      <div class="shots">
+        <figure class="shot reveal" style="--i:0">
+          <img src="assets/images/screens/library.webp"
+               alt="Coral library screen: playlists arranged in an arc around a sphere of artists"
+               width="720" height="960" loading="lazy" decoding="async">
+          <figcaption><b>The library</b><span>Playlists in orbit</span></figcaption>
+        </figure>
+        <figure class="shot reveal" style="--i:1">
+          <img src="assets/images/screens/effect.webp"
+               alt="Coral 8D audio screen: a warm dot sphere inside rings of reverb names, above a head wearing headphones"
+               width="720" height="960" loading="lazy" decoding="async">
+          <figcaption><b>8D audio</b><span>The spatial sphere</span></figcaption>
+        </figure>
+        <figure class="shot reveal" style="--i:2">
+          <img src="assets/images/screens/head.webp"
+               alt="Close-up of the Coral listener: a glossy head wearing headphones under a glowing orb"
+               width="720" height="960" loading="lazy" decoding="async">
+          <figcaption><b>The listener</b><span>Detail, up close</span></figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
   <section class="section" id="inside">
     <div class="wrap">
       <div class="head">
-        <div><span class="kicker">01 &mdash; Inside</span></div>
+        <div><span class="kicker">02 &mdash; Inside</span></div>
         <div class="reveal">
           <h2 class="h-lg">Quietly excellent<br>where it counts.</h2>
           <p>Nothing here is a feature for the back of a box. Each one exists because
@@ -513,7 +570,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
   <section class="section rule" id="player">
     <div class="wrap split">
       <div>
-        <span class="kicker">02 &mdash; The player</span>
+        <span class="kicker">03 &mdash; The player</span>
         <h2 class="h-lg" style="margin-top:18px">One screen<br>you stay on.</h2>
         <ul class="points">
           <li>
@@ -586,7 +643,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
   <section class="section" id="specs">
     <div class="wrap">
       <div class="head">
-        <div><span class="kicker">03 &mdash; Details</span></div>
+        <div><span class="kicker">04 &mdash; Details</span></div>
         <div class="reveal">
           <h2 class="h-lg">Small app.<br>Short list.</h2>
           <p>No subscription, no tier system, no account to recover. Coral reads what
