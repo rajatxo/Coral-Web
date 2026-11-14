@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Privacy — Coral</title>
+<meta name="description" content="How Coral handles your data: no account, no analytics, library stays on the device.">
+<meta name="theme-color" content="#000000">
+<link rel="canonical" href="https://coralmusic.vercel.app/privacy.html">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23000'/%3E%3Ccircle cx='32' cy='32' r='13' fill='none' stroke='%23F5F5F7' stroke-width='2.5'/%3E%3Ccircle cx='32' cy='32' r='4' fill='%23F5F5F7'/%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#000000; --surface-1:#181818; --surface-2:#1F1F1F;
+  --text:#F5F5F7; --text-variant:#D2D2D4; --text-muted:#A1A1A3;
+  --line:rgba(255,255,255,.08); --line-strong:rgba(255,255,255,.16);
+  --s-25:2px; --s-50:4px; --s-75:8px; --s-100:12px; --s-200:16px;
+  --s-300:24px; --s-400:32px; --s-500:40px; --s-600:48px;
+  --s-700:64px; --s-800:80px; --s-900:96px;
+  --r-md:12px; --r-lg:16px; --r-xl:24px; --r-full:9999px;
+  --ease:cubic-bezier(.22,1,.36,1);
+  --page:var(--s-600); --max:1120px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;scroll-padding-top:var(--s-900)}
+body{
+  background:var(--bg); color:var(--text);
+  font-family:'Geist',system-ui,-apple-system,'Segoe UI',sans-serif;
+  font-size:16px; line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:inherit;text-decoration:none}
+::selection{background:#F5F5F7;color:#000}
+:focus-visible{outline:2px solid rgba(245,245,247,.75);outline-offset:3px;border-radius:var(--r-full)}
+
+.heading-1{font-size:60px;line-height:1;font-weight:600;letter-spacing:-.045em;text-wrap:balance}
+.heading-2{font-size:30px;line-height:36px;font-weight:600;letter-spacing:-.03em}
+.heading-6{font-size:20px;line-height:28px;font-weight:600;letter-spacing:-.02em}
+.body-3{font-size:16px;line-height:24px;color:var(--text-variant);text-wrap:pretty}
+.body-6{font-size:14px;line-height:20px;color:var(--text-muted);text-wrap:pretty}
+.caption-2{font-size:14px;line-height:20px;color:var(--text-muted)}
+.caption-5{font-size:12px;line-height:16px;color:var(--text-muted)}
+
+.wrap{width:100%;max-width:var(--max);margin:0 auto;padding-inline:var(--page)}
+
+.nav{
+  position:fixed;top:var(--s-200);left:50%;transform:translateX(-50%);z-index:100;
+  display:flex;align-items:center;gap:var(--s-200);
+  padding:var(--s-75) var(--s-300);
+  border:1px solid var(--line);border-radius:var(--r-full);
+  background:rgba(24,24,24,.72);
+  -webkit-backdrop-filter:blur(20px) saturate(120%);
+  backdrop-filter:blur(20px) saturate(120%);
+}
+.brand{display:inline-flex;align-items:center;gap:var(--s-100)}
+.brand-mark{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--text);display:grid;place-items:center;flex:none}
+.brand-mark::after{content:"";width:6px;height:6px;border-radius:50%;background:var(--text)}
+.brand-name{font-size:16px;font-weight:600;letter-spacing:-.02em}
+.nav a.back{font-size:14px;line-height:20px;font-weight:500;color:var(--text-muted);padding:var(--s-75) var(--s-100);border-radius:var(--r-full);transition:color .2s var(--ease),background .2s var(--ease)}
+.nav a.back:hover{color:var(--text);background:rgba(255,255,255,.06)}
+
+main{padding-top:calc(var(--s-900) + var(--s-700));padding-bottom:var(--s-900)}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:var(--s-75);
+  padding:var(--s-50) var(--s-100);border:1px solid var(--line);border-radius:var(--r-full);
+  color:var(--text-muted);font-size:12px;line-height:16px;font-weight:500;
+}
+.eyebrow i{width:5px;height:5px;border-radius:50%;background:var(--text);opacity:.6}
+h1{margin-top:var(--s-300);max-width:20ch}
+.lead{margin-top:var(--s-300);max-width:60ch;font-size:18px;line-height:28px;color:var(--text-muted);text-wrap:pretty}
+
+.toc{
+  margin-top:var(--s-600);padding:var(--s-300);
+  border:1px solid var(--line);border-radius:var(--r-xl);background:var(--surface-1);
+  display:grid;grid-template-columns:repeat(2,1fr);gap:var(--s-50) var(--s-300);
+}
+.toc a{font-size:14px;line-height:20px;color:var(--text-muted);padding:var(--s-50) 0;transition:color .2s var(--ease)}
+.toc a:hover{color:var(--text)}
+
+.article{max-width:760px;margin-top:var(--s-900)}
+.article section{padding-top:var(--s-500);border-top:1px solid var(--line);margin-top:var(--s-500)}
+.article section:first-child{margin-top:0;padding-top:0;border-top:0}
+.article h2{margin-bottom:var(--s-200)}
+.article p{margin-top:var(--s-200);max-width:68ch}
+.article ul{margin-top:var(--s-200);padding-left:var(--s-300);display:grid;gap:var(--s-75)}
+.article li{font-size:14px;line-height:20px;color:var(--text-muted);text-wrap:pretty}
+.article a{color:var(--text);border-bottom:1px solid var(--line-strong)}
+.article a:hover{border-bottom-color:var(--text)}
+.note{
+  margin-top:var(--s-300);padding:var(--s-300);
+  border:1px solid var(--line);border-radius:var(--r-lg);background:var(--surface-1);
+}
+.note p{margin-top:var(--s-50);font-size:14px;line-height:20px;color:var(--text-muted)}
+
+.footer{border-top:1px solid var(--line);padding-block:var(--s-400) var(--s-500)}
+.footer-in{display:flex;align-items:center;justify-content:space-between;gap:var(--s-300);flex-wrap:wrap}
+.footer-links{display:flex;gap:var(--s-25);flex-wrap:wrap}
+.footer-links a{font-size:14px;line-height:20px;color:var(--text-muted);padding:var(--s-75) var(--s-100);border-radius:var(--r-full);transition:color .2s var(--ease),background .2s var(--ease)}
+.footer-links a:hover{color:var(--text);background:rgba(255,255,255,.05)}
+
+@media (max-width:900px){
+  :root{--page:var(--s-300)}
+  .heading-1{font-size:36px;line-height:40px}
+  main{padding-top:calc(var(--s-900) + var(--s-600))}
+  .toc{grid-template-columns:1fr}
+}
+@media (max-width:640px){
+  :root{--page:var(--s-200)}
+  .footer-in{flex-direction:column;align-items:flex-start}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <a class="brand" href="index.html" aria-label="Coral, home">
+    <span class="brand-mark" aria-hidden="true"></span>
+    <span class="brand-name">Coral</span>
+  </a>
+  <a class="back" href="index.html">&larr; Back to site</a>
+</header>
+
+<main>
+  <div class="wrap">
+    <span class="eyebrow"><i aria-hidden="true"></i> Legal</span>
+    <h1 class="heading-1">Privacy.</h1>
+    <p class="lead">Coral is a local music player. It has no account system, it does not profile you, and your music files never leave your device. This page explains the two places where data does move.</p>
+
+    <nav class="toc" aria-label="On this page">
+      <a href="#library">Your music library</a>
+      <a href="#network">Network requests</a>
+      <a href="#website">This website</a>
+      <a href="#permissions">App permissions</a>
+      <a href="#children">Children</a>
+      <a href="#changes">Changes and contact</a>
+    </nav>
+
+    <div class="article">
+      <section id="library">
+        <h2 class="heading-2">Your music library</h2>
+        <p class="body-3">Coral reads the audio files that Android's media library already knows about, using the storage permission you grant on first launch. That reading happens on the device.</p>
+        <p class="body-3">There is no upload, no sync and no server copy of your library, your playlists or your listening history. Playlists, cover choices and settings are stored inside the app's private storage and are removed when you uninstall it.</p>
+        <div class="note">
+          <span class="caption-5">In short</span>
+          <p>No account. No cloud library. No listening history sent anywhere.</p>
+        </div>
+      </section>
+
+      <section id="network">
+        <h2 class="heading-2">Network requests</h2>
+        <p class="body-3">Coral is offline first. Two features need a connection, and both only send the text needed to look something up:</p>
+        <ul>
+          <li>Lyrics: a track title and artist name are sent to open lyric databases such as LRCLIB, Better Lyrics, LyricsPlus and SimpMusic Lyrics.</li>
+          <li>Artist and album details: an artist or release name is sent to MusicBrainz and Wikipedia, with artwork coming from the Cover Art Archive.</li>
+        </ul>
+        <p class="body-3">Nothing else is transmitted. No file contents, no device identifiers and no location. Those services are independent of Coral and answer to their own privacy policies.</p>
+      </section>
+
+      <section id="website">
+        <h2 class="heading-2">This website</h2>
+        <p class="body-3">The site is a small set of static pages hosted on Vercel. There is no analytics script, no advertising pixel, no cookie banner and no contact form. Fonts are loaded from Google Fonts, which means Google receives the request for the font file.</p>
+        <p class="body-3">The Telegram link opens Telegram in a new tab. Anything you send there is handled by Telegram under its own policy.</p>
+      </section>
+
+      <section id="permissions">
+        <h2 class="heading-2">App permissions</h2>
+        <ul>
+          <li>Audio and media access, so the app can read your files and their metadata.</li>
+          <li>Notifications, so playback controls can appear on the lock screen and in the shade.</li>
+          <li>Internet, used only for the lyric and artist lookups described above.</li>
+        </ul>
+        <p class="body-3">Declining media access leaves Coral with nothing to play. The app does not request location, contacts, camera or microphone.</p>
+      </section>
+
+      <section id="children">
+        <h2 class="heading-2">Children</h2>
+        <p class="body-3">Coral is a general purpose music player. It does not knowingly collect personal information from anyone, including children, because it does not collect personal information at all.</p>
+      </section>
+
+      <section id="changes">
+        <h2 class="heading-2">Changes and contact</h2>
+        <p class="body-3">If a future version adds a feature that changes any of the above, this page will be updated before that version ships.</p>
+        <p class="body-3">Questions go to <a href="https://t.me/rajat_xo" target="_blank" rel="noopener">Telegram</a>. Last updated 14 November 2026.</p>
+      </section>
+    </div>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="wrap footer-in">
+    <p class="caption-5">&copy; 2026 Coral. Designed and built by Rajat.</p>
+    <nav class="footer-links" aria-label="Elsewhere and legal">
+      <a href="https://t.me/rajat_xo" target="_blank" rel="noopener">Telegram</a>
+      <a href="https://github.com/rajatxo" target="_blank" rel="noopener">GitHub</a>
+      <a href="privacy.html" aria-current="page">Privacy</a>
+      <a href="terms.html">Terms</a>
+    </nav>
+  </div>
+</footer>
+
+</body>
+</html>
